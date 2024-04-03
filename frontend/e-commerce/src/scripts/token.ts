@@ -35,6 +35,15 @@ export const getUserToken = () => {
     return null;
 }
 
+export const getProfil= () => {
+    const Cookie = document.cookie.match(/Profil=([^;]+)/);
+    if (Cookie) {
+        return decodeURIComponent(Cookie[1]); // Décode le contenu du cookie si nécessaire
+    }
+    return null;
+}
+
+
 // Créer une instance Axios avec le jeton CSRF inclus dans les en-têtes
 
 export const IfExistCookie = (name) => {

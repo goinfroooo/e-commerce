@@ -2,8 +2,8 @@
 
 <section id="articles_preview" class="offset-top">
   <div class="container">
-    <div class="row">
-      <div v-if="!all_article" class="spinner-border" role="status">
+    <div class="row d-flex justify-content-center">
+      <div v-if="!all_article" class="spinner-border " role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
       <div class="col-3 my-3" v-for="article in all_article">
@@ -65,16 +65,22 @@ const get_all_articles = async () => {
             return data;
         } catch (error) {
             console.error("Erreur lors de l'envoi du formulaire:", error);
-            alert("erreur : veuillez contacter l'administrateur du site")
         }
     
 }
 
+const get_data =   async () => {
+  await AskCsrfToken();
+  all_article.value =  await get_all_articles(); // Appelez retrieve_game_list lorsque le composant est monté
+}
+
+// Définir l'intervalle de 5 secondes en millisecondes
+setInterval(get_data, 60000);
+
 
 
 onMounted(async () => {
-  await AskCsrfToken();
-  all_article.value =  await get_all_articles(); // Appelez retrieve_game_list lorsque le composant est monté
+  get_data();
   
 });
 </script>

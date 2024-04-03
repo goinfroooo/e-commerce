@@ -16,6 +16,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: [
             '/all_articles',
             '/article',
+            '/user/create_user',
+            '/user/get_profil',
+            '/user/update_profil',
+            '/cart/add',
             
         ]);
         $middleware->append(CorsMiddleware::class);

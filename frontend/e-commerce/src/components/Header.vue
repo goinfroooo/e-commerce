@@ -10,10 +10,22 @@
                 <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse justify-content-end me-3" id="navbarNav">
-                    <ul class="navbar-nav">
-                        <li class="nav-item active">
-                            <router-link to="/" class="nav-link">Profil</router-link>
+                    <ul v-if="isConnected" class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a v-if="profil" class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                {{profil.name}} <br>Voir le profil
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><router-link to="/profil" class="dropdown-item">Mon Profil</router-link></li>
+                                <li><button @click="deconnect()">Deconnexion</button></li>
+                            </ul>
                         </li>
+                        <li class="nav-item">
+                            <router-link to="/panier" class="nav-link">Panier</router-link>
+                        </li>
+
+                    </ul>
+                    <ul v-else  class="navbar-nav">
                         <li class="nav-item active">
                             <a class="nav-link " data-bs-toggle="modal" data-bs-target="#modal_connexion">Connexion</a>
                         </li>
@@ -26,47 +38,98 @@
     </header>
 
     <!-- Modal -->
-<div class="modal" id="modal_connexion" tabindex="-1">
-                        <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title fw-bold">Connexion</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form method="post" action="./contact_form_treatment.php" id="connexion_form">
-                                    <div class="mb-3">
-                                        <label for="contact_email" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="connexion_email" name="connexion_email" placeholder="prenom.nom@email.com">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="connexion_password" class="form-label">Mot de passe</label>
-                                        <input type="password" class="form-control" id="connexion_password" name="connexion_password" placeholder="">
-                                    </div>
-
-                                    <input class="btn btn-primary w-100" type="button" value = "Connexion" @click="submit_connexion_form()">
-                            </form>
-                        <p>Pas encore inscrit ? Inscrivez vous <router-link to="/Registration" @click="closeModal">ici</router-link></p>
-                    
-                        </div>
-                            <div class="modal-footer">
-                                <button id="btn_dismiss_modal_connexion" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                            </div>
-                        </div>
-                        </div>
+    <div class="modal" id="modal_connexion" tabindex="-1">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">Connexion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="./contact_form_treatment.php" id="connexion_form">
+                    <div class="mb-3">
+                        <label for="contact_email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="connexion_email" name="connexion_email" placeholder="prenom.nom@email.com">
                     </div>
+                    <div class="mb-3">
+                        <label for="connexion_password" class="form-label">Mot de passe</label>
+                        <input type="password" class="form-control" id="connexion_password" name="connexion_password" placeholder="">
+                    </div>
+
+                    <input class="btn btn-primary w-100" type="button" value = "Connexion" v-on:click="submit_connexion_form()">
+            </form>
+        <p>Pas encore inscrit ? Inscrivez vous <router-link to="/Registration" @click="closeModal">ici</router-link></p>
+    
+        </div>
+            <div class="modal-footer">
+                <button id="btn_dismiss_modal_connexion" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+        </div>
+    </div>
 </template>
 
 <script setup lang="ts">
 
 
-import { getCsrfToken,AskCsrfToken,setCookie } from "../scripts/token";
-import {Config} from "../scripts/config";
+import { getUserToken,getCsrfToken,AskCsrfToken,setCookie, deleteCookie,getProfil } from "../scripts/token";
+import Config from "../scripts/config";
 import { Modal } from 'bootstrap';
-import { onMounted } from "vue";
+import { onMounted,ref } from "vue";
 
+const isConnected = ref(false);
+const profil = ref(null);
+    
 const submit_connexion_form = async () => {
+    // Récupérer les données du formulaire
+    
+    var form = document.getElementById('connexion_form');
+    console.log (form);
+    var formData = new FormData(form);
+    const route = "/user/get_profil";
+    // Envoyer les données via Fetch
+    await AskCsrfToken ();
+
+    let options = {
+        method: 'POST',
+        headers: {
+            "X-CSRF-TOKEN":getCsrfToken(),
+        },
+        body: formData,
+    }
+    console.log (options);
+    fetch(Config.backendConfig.apiUrl+route, options)
+    .then(response => {
+        console.log(response)
+        if (!response.ok) {
+            throw new Error('La requête a échoué.');
+        }
+        return response.json();
+    }) // Si le script PHP renvoie du JSON
+    .then(data => {
+        // Traiter la réponse du serveur (si nécessaire)
+        console.log(data);
+        setCookie("USER-TOKEN",data.user_token,30)
+        const profil_info: {} = data;
+        delete profil_info["user_token"];
+        profil_info["password"]=formData.get("password");
+        console.log(profil_info);
+        setCookie("Profil",JSON.stringify(profil_info),30)
+        alert ("connected");
+
+    })
+    .catch(error => {
+        // Gérer les erreurs de la requête
+        console.error("Erreur lors de l'envoi du formulaire:", error);
+        alert ("erreur : veuillez contacter l'administrateur du site")
+    });
 };
+
+const deconnect = () => {
+
+    deleteCookie("USER-TOKEN");
+    deleteCookie("Profil");
+}
 
 const closeModal = () => {
     const btn_dismiss = document.getElementById("btn_dismiss_modal_connexion");
@@ -74,11 +137,15 @@ const closeModal = () => {
 }
 
 onMounted( () => {
-  const modal = new Modal(document.getElementById('modal_connexion',{
-  keyboard: true
-}));
+  const modal = new Modal(document.getElementById('modal_connexion',{keyboard: true}));
 
 });
+
+// Définir l'intervalle de 5 secondes en millisecondes
+setInterval(() => {
+    isConnected.value = getUserToken() === null ? false : true;
+    profil.value = getProfil()===null ? null : JSON.parse(getProfil());
+}, 1000);
 
 
 </script>

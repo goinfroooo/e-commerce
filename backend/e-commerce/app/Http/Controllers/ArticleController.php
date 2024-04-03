@@ -42,7 +42,7 @@ class ArticleController extends Controller
 
         if ($article) {
             // Si le token existe, récupérer l'ID correspondant
-            unset($article->token);
+            //unset($article->token);
             
             return $article;
 

@@ -14,8 +14,10 @@
         <ul class="list-group list-group-flush">
             <li class="list-group-item">Prix : {{formatPrice(article.prix)}}</li>
         </ul>
-        <div class="card-body">
-            <a href="#" class="card-link">Acheter</a>
+        <div class="card-body d-flex justify-content-center">
+          
+          <input class="form-control" id="qte" name="qte" type="number" min="1" step="1" value="1" style="width: 10%;">
+          <button  href="#" class="card-link btn btn-primary" @click="add_to_cart">Ajouter au panier</button>
         </div>
     </div>
   </div>
@@ -28,11 +30,11 @@
   import Config from "../scripts/config";
   import { useRoute } from 'vue-router';
   import {formatPrice} from "../scripts/commun";
+import { Value } from 'sass';
 
   const article = ref(null);
 
   const get_article_data = async (token) => {
-    console.log(token);
     try {
       //const articleId = this.$route.params.id;
       
@@ -63,22 +65,64 @@
 
   }
 
+
+const add_to_cart = async () => {
+
+  
+    try {
+      const user_token = getUserToken();
+
+      if (!user_token) {
+        alert ("veuillez vous connectez ou creer un compte");
+        return -1;
+      }
+      
+      const route = "/cart/add";
+      let options = {
+          method: 'POST',
+          headers: {
+              "X-CSRF-TOKEN": getCsrfToken(),
+              "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            "article_token": article.value.token,
+            "user_token": user_token,
+            "qte": document.getElementById("qte").value,
+            
+          }),
+      }
+      console.log(options);
+
+      
+          const response = await fetch(Config.backendConfig.apiUrl + route, options);
+          if (!response.ok) {
+              throw new Error('La requête a échoué.');
+          }
+          const data = await response.json();
+          console.log ("wesh");
+          console.log(data);
+          return data.message==="sucess" ? 0 : -1;
+      } catch (error) {
+          console.error("Erreur lors de l'envoi du formulaire:", error);
+          alert("erreur : veuillez contacter l'administrateur du site")
+      }
+
+}
+
 onMounted( async () => {
   AskCsrfToken();
   const route = useRoute();
   const articleToken = route.params.token; 
   article.value = await get_article_data(articleToken);
+  
 });
 
 
 
+</script>
+
+<style scoped lang="scss">
 
 
-  </script>
-  
-  <style scoped lang="scss">
-  
-  
-  
-  </style>
+</style>
   
