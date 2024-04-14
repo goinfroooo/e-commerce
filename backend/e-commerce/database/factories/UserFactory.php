@@ -30,6 +30,7 @@ class UserFactory extends Factory
             'name' => fake()->name(),
             'birthday' => $faker->dateTimeBetween('-90 years', '-18 years')->format('Y-m-d'),
             'email' => fake()->unique()->safeEmail(),
+            'mail_token' => Str::random(10),
             'email_verified_at' => now(),
             'adress' => $faker->address(),
             'phone' => $faker->phoneNumber(),

@@ -13,11 +13,12 @@
                     <ul v-if="isConnected" class="navbar-nav">
                         <li class="nav-item dropdown">
                             <a v-if="profil" class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                {{profil.name}} <br>Voir le profil
+                                {{profil.name}} 
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><router-link to="/profil" class="dropdown-item">Mon Profil</router-link></li>
-                                <li><button @click="deconnect()">Deconnexion</button></li>
+                                <li><router-link to="/profil" class="dropdown-item">Mon profil</router-link></li>
+                                <li><router-link to="/historique" class="dropdown-item">Mes commandes</router-link></li>
+                                <li><button  class="dropdown-item" @click="deconnect()">Deconnexion</button></li>
                             </ul>
                         </li>
                         <li class="nav-item">
@@ -86,7 +87,7 @@ const submit_connexion_form = async () => {
     var form = document.getElementById('connexion_form');
     console.log (form);
     var formData = new FormData(form);
-    const route = "/user/get_profil";
+    const route = "/user/get_connected";
     // Envoyer les données via Fetch
     await AskCsrfToken ();
 

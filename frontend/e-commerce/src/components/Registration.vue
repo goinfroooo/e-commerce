@@ -1,10 +1,10 @@
 <template>
 
-<section class="inscription_form bg-info p-4 rounded-3 mt-2 offset-top">
+<section class="inscription_form bg-white p-4 rounded-3 mt-3 mx-3 offset-top">
         <h1 class="d-flex justify-content-center ">Inscription</h1>
         <div class="container">
             <div class="row ">
-                <form method="post" action="./contact_form_treatment.php" id="contact_form">
+                <form method="post" action="./contact_form_treatment.php" id="registration_form">
                     <div class="mb-3 d-flex">
                         <div class="me-3">
                             <label for="inscription_surname" class="form-label">Prénom</label>
@@ -100,7 +100,7 @@
     const submit_inscription_form = async () => {
         // Récupérer les données du formulaire
 
-        let form = document.getElementById('contact_form');
+        let form = document.getElementById('registration_form');
         
         const formData: FormData =  formatData(form);
         const route = "/user/create_user";
@@ -125,14 +125,17 @@
         }) // Si le script PHP renvoie du JSON
         .then(data => {
             // Traiter la réponse du serveur (si nécessaire)
-            console.log(data);
-            alert ("inscription effectuée");
-
+            console.log(data.message);
+            if (data.message =="sucess") {
+                alert ("inscription effectuée");
+            }
+            else {
+                alert(data["error"]);
+            }
         })
         .catch(error => {
             // Gérer les erreurs de la requête
-            console.error(error);
-            alert ("erreur : veuillez contacter l'administrateur du site")
+            alert ("erreur : "+error+" veuillez contacter l'administrateur du site")
         });
     }
   

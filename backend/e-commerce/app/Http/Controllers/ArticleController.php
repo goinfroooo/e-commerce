@@ -8,6 +8,9 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 
 use App\Models\Article;
+use App\Models\article as ModelsArticle;
+use App\Models\Stock;
+use App\Models\Panier;
 
 class ArticleController extends Controller
 {
@@ -39,12 +42,26 @@ class ArticleController extends Controller
 
         //On essaie de récupèrer l'id qui correspond au token
         $article = Article::where('token', $validatedData["article_token"])->first();
+        
 
         if ($article) {
-            // Si le token existe, récupérer l'ID correspondant
-            //unset($article->token);
+            $stock = Stock::where ("article_id",$article->id)->first();
+            $qte_in_cart=0;
+            $panier = Panier::where("article_id",$article->id)->get();
+            foreach ($panier as $item) {
+                $qte_in_cart+= $item->qte;
             
-            return $article;
+                // Faites ce que vous avez besoin de faire avec chaque élément ici
+            }
+            $content = [];
+            $content["nom"]=$article->nom;
+            $content["prix"]=$article->prix;
+            $content["short_desc"]=$article->short_desc;
+            $content["description"]=$article->description;
+            $content["img_path"]=$article->img_path;
+            $content["token"]=$article->token;
+            $content["stock"]=$stock->qte-$qte_in_cart;
+            return response()->json(['content' => $content], 200);
 
         } else {
             // Si le token fourni n'existe pas, on renvoit une erreur 404

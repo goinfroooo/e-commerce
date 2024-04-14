@@ -1,5 +1,5 @@
 <template>
-    <footer class="border-top">
+    <footer class="border-top border-dark border-5 bg-ligth">
         <div class="container-fluid container-lg py-3 px-5">
             <div class="row gy-4">
                 <div class="col-12 text-center">
@@ -96,8 +96,8 @@ import { onMounted,ref } from "vue";
 import "https://kit.fontawesome.com/14273d579a.js";
 
 onMounted( () => {
-  const modal = new Modal(document.getElementById('modal_mention_legales',{keyboard: true}));
-  const modal2 = new Modal(document.getElementById('modal_conditions_vente',{keyboard: true}));
+  const modal = new Modal(document.getElementById('modal_mention_legales'),{keyboard: true});
+  const modal2 = new Modal(document.getElementById('modal_conditions_vente'),{keyboard: true});
 
 });
 
@@ -106,5 +106,4 @@ onMounted( () => {
 <style scoped lang="scss">
 
 
-    
 </style>

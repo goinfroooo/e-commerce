@@ -17,9 +17,13 @@ return Application::configure(basePath: dirname(__DIR__))
             '/all_articles',
             '/article',
             '/user/create_user',
-            '/user/get_profil',
+            '/user/get_connected',
             '/user/update_profil',
+            '/user/activate',
             '/cart/add',
+            '/cart/get',
+            '/cart/remove_article',
+            '/cart/update_qte',
             
         ]);
         $middleware->append(CorsMiddleware::class);

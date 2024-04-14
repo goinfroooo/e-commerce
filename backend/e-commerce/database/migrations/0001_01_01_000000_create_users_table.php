@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('phone');
             $table->string('password');
             $table->uuid('user_token')->unique();
+            $table->uuid('mail_token');
             $table->rememberToken();
             $table->timestamps();
         });

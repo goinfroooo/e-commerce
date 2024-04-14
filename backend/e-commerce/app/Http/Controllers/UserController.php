@@ -1,15 +1,17 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Models\User;
+use App\Mail\inscription;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
+use Ramsey\Uuid\Uuid;
 
 class UserController extends Controller
 {
@@ -45,28 +47,39 @@ class UserController extends Controller
         
             // Créer un nouvel utilisateur
             $validatedData=$validator->validated();
+            $token_email = Uuid::uuid4()->toString();
+            $appUrl = env('APP_URL');
+            $url = $appUrl .':8000'.'/user/activate/';
+
+    
+            $activationLink = $url .urlencode($validatedData["email"])."/". $token_email; 
+
+            // Envoi de l'e-mail d'activation
+            Mail::to($validatedData["email"])->send(new inscription($activationLink));
+    
         
             $user = new User();
             $user->name = $validatedData['name'];
             $user->birthday = Carbon::createFromFormat('Y-m-d', $validatedData['birthday'])->toDateString();
             $user->email = $validatedData['email'];
+            $user->mail_token = $token_email;
             $user->adress = $validatedData["adress"];
             $user->phone = $validatedData["phone"];
             $user->password = bcrypt($validatedData['password']); // Hasher le mot de passe
             $user->save();
     
             // Retourner une réponse appropriée
-            return "inscription effectuée";
+            return response()->json(['message' =>"sucess"], 200);
             
             
         } catch (\Exception $e) {
             // En cas d'erreur, annuler la transaction
-            return $e;
+            return response()->json(['error' => $e->getMessage()], 404);
             throw $e;
         }
     }
 
-    public function get_profil(Request $request)
+    public function get_connected(Request $request)
     {
         try {
             $validator = Validator::make($request->all(), [
@@ -145,26 +158,29 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request,)
+    public function validate($email,$token)
     {
         
-        
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        try {
+            $user= User::where("email",$email)->where("mail_token",$token)->first();
+            if($user) {
+                if ($user->email_verified_at != NULL ) {
+                    return response()->json(['message' => "acount already verified"], 200);
+                }
+                else {
+                    $user->email_verified_at = Carbon::now()->format('Y-m-d H:i:s');
+                    $user->save();
+                    return response()->json(['message' => "acount activated"], 200);
+                }
+            }
+            else {
+                return response()->json(['message' => "no user account corresponding"], 200);
+            }
+        } catch (\Exception $e) {
+            // En cas d'erreur, annuler la transaction
+            return response()->json(['error' => $e->getMessage()], 404);
+            throw $e;
+        }
     }
 
 }

@@ -31,15 +31,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref,onMounted } from 'vue';
+import { ref,onMounted,onBeforeUnmount } from 'vue';
 import { getCsrfToken,getUserToken,AskCsrfToken} from "../scripts/token";
 import Config from "../scripts/config";
 import {formatPrice} from "../scripts/commun";
 
-
-
-
-
+const intervalId = ref(null);
 const all_article = ref(null);
 
 const get_all_articles = async () => {
@@ -75,13 +72,20 @@ const get_data =   async () => {
 }
 
 // Définir l'intervalle de 5 secondes en millisecondes
-setInterval(get_data, 60000);
+
 
 
 
 onMounted(async () => {
   get_data();
+  intervalId.value = setInterval(get_data, 3000);
   
+  
+});
+
+onBeforeUnmount( () => {
+  
+  clearInterval(intervalId.value);
 });
 </script>
 

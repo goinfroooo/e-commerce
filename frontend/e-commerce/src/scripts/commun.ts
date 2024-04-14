@@ -1,9 +1,43 @@
+import { getCsrfToken,getUserToken,AskCsrfToken} from "./token";
+import Config from "./config";
+
 export const formatPrice = (priceInCentimes) => {
     // Convertir le prix en euros
     const priceInEuros = priceInCentimes / 100;
     // Formater le prix en xxx.xx €
     return priceInEuros.toFixed(2) + ' €';
   }
+  
+
+export const get_article_data = async (token) => {
+  try {
+    //const articleId = this.$route.params.id;
+    
+    const route = "/article";
+    let options = {
+        method: 'POST',
+        headers: {
+            "X-CSRF-TOKEN": getCsrfToken(),
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          "article_token": token,
+        }),
+    }
+
+    
+        const response = await fetch(Config.backendConfig.apiUrl + route, options);
+        if (!response.ok) {
+            throw new Error('La requête a échoué.');
+        }
+        const data = await response.json();
+        return data.content;
+    } catch (error) {
+        console.error("Erreur lors de l'envoi du formulaire:", error);
+        alert("erreur : veuillez contacter l'administrateur du site")
+    }
+
+}
 
 export const phone_prefix = {
   "AD": "+376",
