@@ -11,13 +11,23 @@ return new class extends Migration
      */
     public function up(): void
     {
+
+        Schema::create('adresses', function (Blueprint $table) {
+            $table->id();
+            $table->string("adress");
+            $table->timestamps();
+        });
+
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->date("birthday");
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('adress');
+            $table->unsignedBigInteger("adresse_livraison_id");
+            $table->foreign("adresse_livraison_id")->references("id")->on("adresses")->onDelete("cascade");
+            $table->unsignedBigInteger("adresse_facturation_id");
+            $table->foreign("adresse_facturation_id")->references("id")->on("adresses")->onDelete("cascade");
             $table->string('phone');
             $table->string('password');
             $table->uuid('user_token')->unique();
@@ -47,8 +57,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('adresses');
     }
 };

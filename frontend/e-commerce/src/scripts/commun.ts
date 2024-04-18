@@ -1,5 +1,6 @@
-import { getCsrfToken,getUserToken,AskCsrfToken} from "./token";
+import { getCookie} from "./token";
 import Config from "./config";
+import {Popover} from "bootstrap";
 
 export const formatPrice = (priceInCentimes) => {
     // Convertir le prix en euros
@@ -17,7 +18,7 @@ export const get_article_data = async (token) => {
     let options = {
         method: 'POST',
         headers: {
-            "X-CSRF-TOKEN": getCsrfToken(),
+            "X-CSRF-TOKEN": getCookie("X-CSRF-TOKEN"),
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -38,6 +39,53 @@ export const get_article_data = async (token) => {
     }
 
 }
+
+export const get_cart = async () => {
+
+    
+  try {
+      const user_token = getCookie("USER-TOKEN");
+
+  if (!user_token) {
+      alert ("veuillez vous connectez ou creer un compte");
+      return -1;
+  }
+  
+  const route = "/cart/get";
+  let options = {
+      method: 'POST',
+      headers: {
+          "X-CSRF-TOKEN": getCookie("X-CSRF-TOKEN"),
+          "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+          "user_token": user_token,
+      }),
+  }
+  console.log(options);
+
+  
+      const response = await fetch(Config.backendConfig.apiUrl + route, options);
+      if (!response.ok) {
+          throw new Error('La requête a échoué.');
+      }
+      const data = await response.json();
+      console.log(data);
+      return data.content;
+  } catch (error) {
+      console.error("Erreur lors de l'envoi du formulaire:", error);
+      alert("erreur : veuillez contacter l'administrateur du site")
+  }
+
+}
+
+export const showPopover = (event) => {
+  const pop = new Popover(event.target, { placement: 'right', trigger: 'manual', content: "L'article a bien été ajouté au panier"});
+  pop.show();
+  setTimeout(() => {
+      pop.hide();
+  }, 2000);
+};
 
 export const phone_prefix = {
   "AD": "+376",

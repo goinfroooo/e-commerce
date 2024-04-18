@@ -5,7 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
+use App\Models\Commande;
+
 class CommandeController extends Controller
 {
-    //
+    public function create ($user_id,$checkout_id){
+
+    }
 }

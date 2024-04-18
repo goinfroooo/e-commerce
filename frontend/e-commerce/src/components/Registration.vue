@@ -67,7 +67,7 @@
 
 <script setup lang="ts">
     import { ref,onMounted,defineProps } from 'vue';
-    import { getCsrfToken,getUserToken,AskCsrfToken} from "../scripts/token";
+    import { getCookie,AskCsrfToken} from "../scripts/token";
     import Config from "../scripts/config";
     import { useRoute } from 'vue-router';
     import {phone_prefix} from "../scripts/commun";
@@ -110,7 +110,7 @@
         let options = {
             method: 'POST',
             headers: {
-                "X-CSRF-TOKEN":getCsrfToken(),
+                "X-CSRF-TOKEN": getCookie("X-CSRF-TOKEN"),
             },
             body: formData,
         }
@@ -121,21 +121,25 @@
             if (!response.ok) {
                 throw new Error('La requête a échoué.');
             }
-            return response.text();
-        }) // Si le script PHP renvoie du JSON
+            return response.json();
+        }) 
         .then(data => {
-            // Traiter la réponse du serveur (si nécessaire)
             console.log(data.message);
             if (data.message =="sucess") {
                 alert ("inscription effectuée");
             }
             else {
-                alert(data["error"]);
+                alert(data.message || "Une erreur inattendue s'est produite.");
             }
         })
         .catch(error => {
-            // Gérer les erreurs de la requête
-            alert ("erreur : "+error+" veuillez contacter l'administrateur du site")
+            if (error instanceof Error) {
+            // Erreur de réseau ou d'analyse JSON
+            alert("Erreur : " + error.message + ". Veuillez c l'administrateur du site.");
+        } else {
+            // Erreur de réponse HTTP
+            alert("Erreur HTTP : " + error + ". Veuillez vérifier votre connexion Internet.");
+        }
         });
     }
   

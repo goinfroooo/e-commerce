@@ -89,8 +89,6 @@
 <script setup lang="ts">
 
 
-import { getUserToken,getCsrfToken,AskCsrfToken,setCookie, deleteCookie,getProfil } from "../scripts/token";
-import Config from "../scripts/config";
 import { Modal } from 'bootstrap';
 import { onMounted,ref } from "vue";
 import "https://kit.fontawesome.com/14273d579a.js";

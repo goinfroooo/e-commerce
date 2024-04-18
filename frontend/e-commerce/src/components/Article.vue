@@ -34,20 +34,14 @@
   
 <script setup lang="ts">
   import { ref,onMounted } from 'vue';
-  import { getCsrfToken,getUserToken,AskCsrfToken} from "../scripts/token";
+  import { getCookie,AskCsrfToken} from "../scripts/token";
   import Config from "../scripts/config";
   import { useRoute } from 'vue-router';
-  import {formatPrice,get_article_data} from "../scripts/commun";
+  import {formatPrice,get_article_data,showPopover} from "../scripts/commun";
   import {Popover} from "bootstrap";
   const article = ref(null);
 
-  const showPopover = (event) => {
-    const pop = new Popover(event.target, { placement: 'right', trigger: 'manual', content: "L'article a bien été ajouté au panier"});
-    pop.show();
-    setTimeout(() => {
-        pop.hide();
-    }, 2000);
-};
+
 
 
 
@@ -55,7 +49,7 @@ const add_to_cart = async (event) => {
 
   
     try {
-      const user_token = getUserToken();
+      const user_token = getCookie("USER-TOKEN");
 
       if (!user_token) {
         alert ("veuillez vous connectez ou creer un compte");
@@ -66,7 +60,7 @@ const add_to_cart = async (event) => {
       let options = {
           method: 'POST',
           headers: {
-              "X-CSRF-TOKEN": getCsrfToken(),
+              "X-CSRF-TOKEN": getCookie("X-CSRF-TOKEN"),
               "Content-Type": "application/json",
           },
           body: JSON.stringify({

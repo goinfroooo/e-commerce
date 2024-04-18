@@ -5,6 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use App\Models\Adress;
 use Faker\Factory as FakerFactory;
 
 /**
@@ -26,13 +27,15 @@ class UserFactory extends Factory
     {
 
         $faker = FakerFactory::create();
+        $adress_ids = Adress::pluck('id')->toArray();
         return [
             'name' => fake()->name(),
             'birthday' => $faker->dateTimeBetween('-90 years', '-18 years')->format('Y-m-d'),
             'email' => fake()->unique()->safeEmail(),
             'mail_token' => Str::random(10),
             'email_verified_at' => now(),
-            'adress' => $faker->address(),
+            'adresse_livraison_id' => $faker->unique()->randomElement($adress_ids),
+            'adresse_facturation_id' => $faker->unique()->randomElement($adress_ids),
             'phone' => $faker->phoneNumber(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),

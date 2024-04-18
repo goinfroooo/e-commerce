@@ -20,10 +20,12 @@ return Application::configure(basePath: dirname(__DIR__))
             '/user/get_connected',
             '/user/update_profil',
             '/user/activate',
+            '/user/change_mail',
             '/cart/add',
             '/cart/get',
             '/cart/remove_article',
             '/cart/update_qte',
+            '/stripe/pay',
             
         ]);
         $middleware->append(CorsMiddleware::class);

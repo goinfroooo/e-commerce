@@ -73,7 +73,7 @@
 <script setup lang="ts">
 
 
-import { getUserToken,getCsrfToken,AskCsrfToken,setCookie, deleteCookie,getProfil } from "../scripts/token";
+import { AskCsrfToken,setCookie, deleteCookie,getCookie } from "../scripts/token";
 import Config from "../scripts/config";
 import { Modal } from 'bootstrap';
 import { onMounted,ref } from "vue";
@@ -94,7 +94,7 @@ const submit_connexion_form = async () => {
     let options = {
         method: 'POST',
         headers: {
-            "X-CSRF-TOKEN":getCsrfToken(),
+            "X-CSRF-TOKEN":getCookie("X-CSRF-TOKEN"),
         },
         body: formData,
     }
@@ -103,7 +103,12 @@ const submit_connexion_form = async () => {
     .then(response => {
         console.log(response)
         if (!response.ok) {
-            throw new Error('La requête a échoué.');
+            console.warn(response.message);
+            console.warn(response);
+            if (response.status==401 ){
+                throw new Error(response.message);
+            }
+            
         }
         return response.json();
     }) // Si le script PHP renvoie du JSON
@@ -120,9 +125,14 @@ const submit_connexion_form = async () => {
 
     })
     .catch(error => {
-        // Gérer les erreurs de la requête
-        console.error("Erreur lors de l'envoi du formulaire:", error);
-        alert ("erreur : veuillez contacter l'administrateur du site")
+        console.log(error);
+        if (error instanceof Error) {
+            // Erreur de réseau ou d'analyse JSON
+            alert("Erreur : " + error.message + ". Veuillez c l'administrateur du site.");
+        } else {
+            // Erreur de réponse HTTP
+            alert("Erreur HTTP : " + error + ". Veuillez vérifier votre connexion Internet.");
+        }
     });
 };
 
@@ -144,8 +154,8 @@ onMounted( () => {
 
 // Définir l'intervalle de 5 secondes en millisecondes
 setInterval(() => {
-    isConnected.value = getUserToken() === null ? false : true;
-    profil.value = getProfil()===null ? null : JSON.parse(getProfil());
+    isConnected.value = getCookie("USER-TOKEN") === null ? false : true;
+    profil.value = getCookie("Profil")===null ? null : JSON.parse(getCookie("Profil"));
 }, 1000);
 
 

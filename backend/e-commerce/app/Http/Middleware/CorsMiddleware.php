@@ -8,25 +8,35 @@ class CorsMiddleware
 {
     public function handle($request, Closure $next)
     {
-        $allowedHeaders = $request->header('Access-Control-Request-Headers');
-
-        $headers = [
-            'Access-Control-Allow-Origin' => $request->header('Origin'),
-            'Access-Control-Allow-Methods' => 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Credentials' => 'true',
-            'Access-Control-Allow-Headers' => $allowedHeaders, // Inclure les en-têtes autorisés dans la réponse CORS
+        $allowedOrigins = [
+            'http://localhost:5173',
+            // Ajoutez d'autres domaines autorisés au besoin
         ];
 
-        if ($request->isMethod('OPTIONS')) {
-            return response('', 200)->withHeaders($headers);
+        $origin = $request->header('Origin');
+
+        if (in_array($origin, $allowedOrigins)) {
+            $headers = [
+                'Access-Control-Allow-Origin' => $origin,
+                'Access-Control-Allow-Methods' => 'GET, POST, PUT, DELETE, OPTIONS',
+                'Access-Control-Allow-Credentials' => 'true',
+                'Access-Control-Allow-Headers' => $request->header('Access-Control-Request-Headers'),
+            ];
+
+            if ($request->isMethod('OPTIONS')) {
+                return response('', 200)->withHeaders($headers);
+            }
+
+            $response = $next($request);
+
+            foreach ($headers as $key => $value) {
+                $response->headers->set($key, $value);
+            }
+
+            return $response;
         }
 
-        $response = $next($request);
-
-        foreach ($headers as $key => $value) {
-            $response->headers->set($key, $value);
-        }
-
-        return $response;
+        return $next($request);
     }
+
 }

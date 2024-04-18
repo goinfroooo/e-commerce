@@ -18,33 +18,15 @@ export const AskCsrfToken = async () =>  {
     }
 )}
 
-// Fonction pour récupérer le jeton CSRF depuis les cookies de session
-export const getCsrfToken = () => {
-    const csrfCookie = document.cookie.match(/X-CSRF-TOKEN=([^;]+)/);
+
+export const getCookie = (CookieName) => {
+    const csrfCookie = document.cookie.match(new RegExp(`${CookieName}=([^;]+)`));
     if (csrfCookie) {
         return decodeURIComponent(csrfCookie[1]); // Décode le contenu du cookie si nécessaire
     }
     return null;
 }
 
-export const getUserToken = () => {
-    const Cookie = document.cookie.match(/USER-TOKEN=([^;]+)/);
-    if (Cookie) {
-        return decodeURIComponent(Cookie[1]); // Décode le contenu du cookie si nécessaire
-    }
-    return null;
-}
-
-export const getProfil= () => {
-    const Cookie = document.cookie.match(/Profil=([^;]+)/);
-    if (Cookie) {
-        return decodeURIComponent(Cookie[1]); // Décode le contenu du cookie si nécessaire
-    }
-    return null;
-}
-
-
-// Créer une instance Axios avec le jeton CSRF inclus dans les en-têtes
 
 export const IfExistCookie = (name) => {
     let regex = new RegExp('(?:^|;\\s*)' + name + '=([^;]*)');

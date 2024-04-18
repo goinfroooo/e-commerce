@@ -19,7 +19,7 @@ import { onMounted,ref,computed} from 'vue';
 import { useRouter } from 'vue-router';
 import { formatPrice } from '../scripts/commun';
 import Config from "../scripts/config";
-import { getCsrfToken,AskCsrfToken,getUserToken,getProfil,setCookie } from "../scripts/token";
+import { getCookie} from "../scripts/token";
 import { Modal } from 'bootstrap';
 import adress_form from "./subcomponents/Adress_form.vue"
 
@@ -29,7 +29,7 @@ const profil = ref(null) ;
 
 onMounted (()=>{
 
-    profil.value = JSON.parse(getProfil());
+    profil.value = JSON.parse(getCookie("Profil"));
     //const modal_livraison = new Modal(document.getElementById('modal_adresse_livraison'),{keyboard: true});
     //const modal_facturation = new Modal(document.getElementById('modal_adresse_facturation'),{keyboard: true});
 
@@ -37,7 +37,7 @@ onMounted (()=>{
 
 router.afterEach(() => {
   // Rafraîchir les données du profil à chaque changement de route
-  profil.value = JSON.parse(getProfil());
+  profil.value = JSON.parse(getCookie("Profil"));
 });
 
 

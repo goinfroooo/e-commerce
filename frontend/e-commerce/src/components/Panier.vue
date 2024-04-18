@@ -40,9 +40,9 @@
 
 <script setup lang="ts">
     import { onMounted,ref,computed} from 'vue';
-    import { formatPrice,get_article_data} from '../scripts/commun';
+    import {formatPrice, get_cart} from '../scripts/commun';
     import Config from "../scripts/config";
-    import { getCsrfToken,AskCsrfToken,getUserToken,getProfil } from "../scripts/token";
+    import { getCsrfToken,AskCsrfToken,getUserToken,getProfil,getCookie } from "../scripts/token";
     import { Modal } from 'bootstrap';
     import adress_form from "./subcomponents/Adress_form.vue";
     import "https://kit.fontawesome.com/3467c927e1.js";
@@ -50,52 +50,13 @@
     
     const carts = ref([]);
 
-    const get_cart = async () => {
-
-    
-    try {
-        const user_token = getUserToken();
-
-    if (!user_token) {
-        alert ("veuillez vous connectez ou creer un compte");
-        return -1;
-    }
-    
-    const route = "/cart/get";
-    let options = {
-        method: 'POST',
-        headers: {
-            "X-CSRF-TOKEN": getCsrfToken(),
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            "user_token": user_token,
-        }),
-    }
-    console.log(options);
-
-    
-        const response = await fetch(Config.backendConfig.apiUrl + route, options);
-        if (!response.ok) {
-            throw new Error('La requête a échoué.');
-        }
-        const data = await response.json();
-        console.log(data);
-        return data.content;
-    } catch (error) {
-        console.error("Erreur lors de l'envoi du formulaire:", error);
-        alert("erreur : veuillez contacter l'administrateur du site")
-    }
-
-}
-
 
 const update_qte = async (article_token,$event) => {
 
   
 try {
 
-  const user_token = getUserToken();
+  const user_token = getCookie("USER-TOKEN");
 
   if (!user_token) {
     alert ("veuillez vous connectez ou creer un compte");
@@ -106,7 +67,7 @@ try {
   let options = {
       method: 'POST',
       headers: {
-          "X-CSRF-TOKEN": getCsrfToken(),
+          "X-CSRF-TOKEN": getCookie("X-CSRF-TOKEN"),
           "Content-Type": "application/json",
       },
       body: JSON.stringify({
@@ -137,7 +98,7 @@ try {
 const remove_article_from_cart = async (article_token) => {
         
     try {
-        const user_token = getUserToken();
+        const user_token = getCookie("USER-TOKEN");
 
     if (!user_token) {
         alert ("veuillez vous connectez ou creer un compte");
@@ -148,7 +109,7 @@ const remove_article_from_cart = async (article_token) => {
     let options = {
         method: 'POST',
         headers: {
-            "X-CSRF-TOKEN": getCsrfToken(),
+            "X-CSRF-TOKEN": getCookie("X-CSRF-TOKEN"),
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
