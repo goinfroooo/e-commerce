@@ -56,8 +56,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <h5 class="text-uppercase fw-bold">Programmes de Musculation et Coachings de Suivi Mensuel</h5>
-                                <p>Nous vous remercions de votre intérêt pour nos programmes de musculation et nos coachings de suivi mensuel. En accédant à nos services, vous acceptez les conditions suivantes :</p>
+                                
 
                                 <h5 class="text-uppercase fw-bold">Commandes</h5>
                                 <p>Les commandes sont soumises à disponibilité. En passant commande, vous acceptez de payer le montant total indiqué pour le produit ou le service sélectionné.</p>

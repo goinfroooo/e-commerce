@@ -8,11 +8,8 @@ use App\Models\User;
 use App\Models\Article;
 use App\Models\Panier;
 use App\Models\Stock;
-use Illuminate\Contracts\Support\ValidatedData;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Hash;
+
 
 class PanierController extends Controller
 {
@@ -132,6 +129,46 @@ class PanierController extends Controller
             throw $e;
         }
     }
+
+    public function get_qte_tot(Request $request)
+    {
+
+        try {
+            $validator = Validator::make($request->all(), [
+                'user_token' => 'required|string|max:255',
+                
+            ]);
+            
+            if ($validator->fails()) {
+                return response()->json(['error' => $validator->errors()->first()], Response::HTTP_BAD_REQUEST);
+            }
+        
+            // Créer un nouvel utilisateur
+            $validatedData=$validator->validated();
+        
+            $user = User::where("user_token",$validatedData['user_token'])->first();
+
+            if (!$user) {
+                return response()->json(['error' => "token utilisateur invalide"], 404);
+            }
+            else {
+                $carts = Panier::where("user_id",$user->id)->get();
+                $qte_tot=0;
+                foreach ($carts as $cart) {
+                    
+                    $qte_tot+=$cart->qte;
+                    
+                }
+                return response()->json(['qte' => $qte_tot], 200);
+            }
+
+        } catch (\Exception $e) {
+            // En cas d'erreur, annuler la transaction
+            return response()->json(['error' => $e->getMessage()], 404);;
+            throw $e;
+        }
+    }
+
 
     public function remove_article(Request $request)
     {

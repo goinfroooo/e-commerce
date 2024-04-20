@@ -9,7 +9,6 @@ use Illuminate\Http\Response;
 use App\Models\User;
 use App\Mail\inscription;
 use App\Models\Adress;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;

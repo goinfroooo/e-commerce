@@ -28,6 +28,7 @@ class articleFactory extends Factory
             "short_description" =>$faker->sentence(30),
             "description" =>$faker->sentence(100),
             "token" => Str::random(10),
+            "stripe_id" => Str::random(10),
             "options" =>"",
 
         ];

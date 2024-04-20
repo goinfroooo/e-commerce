@@ -23,9 +23,11 @@ return Application::configure(basePath: dirname(__DIR__))
             '/user/change_mail',
             '/cart/add',
             '/cart/get',
+            '/cart/get_qte_tot',
             '/cart/remove_article',
             '/cart/update_qte',
             '/stripe/pay',
+            '/commande/get',
             
         ]);
         $middleware->append(CorsMiddleware::class);

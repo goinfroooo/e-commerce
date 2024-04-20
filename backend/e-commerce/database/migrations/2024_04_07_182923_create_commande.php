@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger("user_id");
             $table->foreign("user_id")->references("id")->on("users")->onDelete("cascade");
-            $table->unsignedBigInteger("checkout_id");
+            $table->string("checkout_id");
             $table->json("articles");
             $table->date("livraison_estimee");
             $table->timestamps();

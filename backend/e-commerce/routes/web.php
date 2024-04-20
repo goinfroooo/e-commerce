@@ -6,6 +6,7 @@ use App\http\Controllers\IndexController;
 use App\http\Controllers\UserController;
 use App\http\Controllers\PanierController;
 use App\http\Controllers\StripeController;
+use App\http\Controllers\CommandeController;
 use Illuminate\Http\Request;
 
 Route::get('/csrf-token', function (Request $request) {
@@ -33,13 +34,17 @@ Route::get('/user/activate_new_mail/{email}/{token}', [UserController::class, 'v
 
 Route::post('/cart/add', [PanierController::class, 'add']);
 Route::post('/cart/get', [PanierController::class, 'get']);
+Route::post('/cart/get_qte_tot', [PanierController::class, 'get_qte_tot']);
 Route::post('/cart/remove_article', [PanierController::class, 'remove_article']);
 Route::post('/cart/update_qte', [PanierController::class, 'update_qte']);
 
 //Stripe routes
 
 Route::post('/stripe/pay', [StripeController::class, 'pay']);
-Route::get('/stripe/pay', [StripeController::class, 'pay']);
+Route::get('/stripe/success/{token}', [StripeController::class, 'success']);
+Route::get('/stripe/cancel/{token}', [StripeController::class, 'cancel']);
 route::get('/stripe/import_all_products', [StripeController::class, 'import_all_products']);
-Route::get('/stripe/success', [StripeController::class, 'success']);
-Route::get('/cancel/sucess', [StripeController::class, 'cancel']);
+
+//Commande routes
+
+Route::post('/commande/get', [CommandeController::class, 'get']);

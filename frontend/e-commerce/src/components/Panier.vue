@@ -42,9 +42,7 @@
     import { onMounted,ref,computed} from 'vue';
     import {formatPrice, get_cart} from '../scripts/commun';
     import Config from "../scripts/config";
-    import { getCsrfToken,AskCsrfToken,getUserToken,getProfil,getCookie } from "../scripts/token";
-    import { Modal } from 'bootstrap';
-    import adress_form from "./subcomponents/Adress_form.vue";
+    import { AskCsrfToken,getCookie } from "../scripts/token";
     import "https://kit.fontawesome.com/3467c927e1.js";
     import Paiement from "./subcomponents/panier_side_menu.vue";
     

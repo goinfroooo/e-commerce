@@ -1,7 +1,10 @@
 <template>
 
     <div class="container">
-        <div class="row">
+        <div v-if="carts=[] || carts===null" class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+        </div>
+        <div v-else class="row">
             <div class="col-md-10"> <!-- Utilisez la colonne Bootstrap pour les éléments du panier -->
                 <div class="card m-2 mb-0">
                     <div class="card-body">
@@ -146,6 +149,7 @@ let options = {
     method: 'POST',
     headers: {
         "X-CSRF-TOKEN":getCookie("X-CSRF-TOKEN"),
+        "Content-Type": "application/json",
     },
     body: JSON.stringify({
             

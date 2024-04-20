@@ -19,6 +19,7 @@ return new class extends Migration
             $table->text('description');
             $table->string('img_path')->nullable();
             $table->uuid('token')->unique();
+            $table->uuid('stripe_id')->unique();
             $table->json('options');
             $table->timestamps();
         });

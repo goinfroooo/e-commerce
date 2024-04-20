@@ -9,7 +9,7 @@ class article extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nom', 'prix', 'short_description','description','img_path','token','options'];
+    protected $fillable = ['nom', 'prix', 'short_description','description','img_path','token','stripe_id','options'];
     
     protected $casts = [
         'options' => 'array',

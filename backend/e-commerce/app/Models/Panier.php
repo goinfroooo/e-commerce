@@ -9,7 +9,7 @@ class panier extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'article_id','qte'];
+    protected $fillable = ['user_id', 'article_id','qte','standby'];
     
 
 }

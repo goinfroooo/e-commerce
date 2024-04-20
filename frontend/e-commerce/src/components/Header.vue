@@ -21,9 +21,14 @@
                                 <li><button  class="dropdown-item" @click="deconnect()">Deconnexion</button></li>
                             </ul>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item d-flex align-items-center">
                             <router-link to="/panier" class="nav-link">Panier</router-link>
+                            <div class="position-relative ml-2" style="top: -20px; right: -20px;">
+                                <span class="position-absolute top-0 end-0 bg-warning text-white px-2 rounded-pill">{{ cart_qte }}</span>
+                            </div>
                         </li>
+
+
 
                     </ul>
                     <ul v-else  class="navbar-nav">
@@ -76,10 +81,12 @@
 import { AskCsrfToken,setCookie, deleteCookie,getCookie } from "../scripts/token";
 import Config from "../scripts/config";
 import { Modal } from 'bootstrap';
-import { onMounted,ref } from "vue";
+import { onMounted,onBeforeUnmount,ref } from "vue";
 
 const isConnected = ref(false);
 const profil = ref(null);
+const cart_qte = ref(null);
+const cart_qte_interval =ref(null);
     
 const submit_connexion_form = async () => {
     // Récupérer les données du formulaire
@@ -136,6 +143,41 @@ const submit_connexion_form = async () => {
     });
 };
 
+const get_cart_qte = async () => {
+    // Récupérer les données du formulaire
+    
+    try {
+        const route = "/cart/get_qte_tot";
+        // Envoyer les données via Fetch
+        await AskCsrfToken ();
+
+        let options = {
+            method: 'POST',
+            headers: {
+                "X-CSRF-TOKEN": getCookie("X-CSRF-TOKEN"),
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                "user_token": getCookie("USER-TOKEN"),
+            }),
+        }
+        console.log(options);
+        const response = await fetch(Config.backendConfig.apiUrl+route, options);
+            if (!response.ok) {
+                throw new Error('La requête a échoué.');
+            }
+            
+            const data = await response.json();
+            // Utilisez les données récupérées ici
+            
+            console.log(data);
+            cart_qte.value = data.qte;
+            return 0;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
 const deconnect = () => {
 
     deleteCookie("USER-TOKEN");
@@ -149,7 +191,14 @@ const closeModal = () => {
 
 onMounted( () => {
   const modal = new Modal(document.getElementById('modal_connexion',{keyboard: true}));
+  cart_qte_interval.value = setInterval(get_cart_qte, 1000);
+});
 
+
+
+onBeforeUnmount( () => {
+  
+  clearInterval(cart_qte_interval.value);
 });
 
 // Définir l'intervalle de 5 secondes en millisecondes
