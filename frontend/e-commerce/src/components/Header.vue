@@ -161,7 +161,7 @@ const get_cart_qte = async () => {
                 "user_token": getCookie("USER-TOKEN"),
             }),
         }
-        console.log(options);
+        //console.log(options);
         const response = await fetch(Config.backendConfig.apiUrl+route, options);
             if (!response.ok) {
                 throw new Error('La requête a échoué.');
@@ -170,7 +170,7 @@ const get_cart_qte = async () => {
             const data = await response.json();
             // Utilisez les données récupérées ici
             
-            console.log(data);
+            //console.log(data);
             cart_qte.value = data.qte;
             return 0;
     } catch (error) {

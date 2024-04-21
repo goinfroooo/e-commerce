@@ -37,6 +37,7 @@ Route::post('/cart/get', [PanierController::class, 'get']);
 Route::post('/cart/get_qte_tot', [PanierController::class, 'get_qte_tot']);
 Route::post('/cart/remove_article', [PanierController::class, 'remove_article']);
 Route::post('/cart/update_qte', [PanierController::class, 'update_qte']);
+Route::post('/cart/update_standby', [PanierController::class, 'update_standby']);
 
 //Stripe routes
 

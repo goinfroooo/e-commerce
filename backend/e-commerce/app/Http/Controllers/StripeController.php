@@ -37,18 +37,25 @@ class StripeController extends Controller
         $validatedData=$validator->validated();
 
         $user = User::where("user_token",$validatedData["user_token"])->first();
+        $paniers= Panier::where("user_id",$user->id)->where("standby",0)->get();
+        $stripe = new \Stripe\StripeClient(env('SECRET_STRIPE_KEY'));
+        $line_items = [];
+        foreach($paniers as $panier) {
+            $item = [];
+            $article = Article::where("id",$panier->article_id)->first();
+            $product = $stripe->products->retrieve($article->stripe_id, []);
+            $item ["price"]=$product->default_price;
+            $item["quantity"]=$panier->qte;
+            array_push($line_items,$item);
+        }
+        
         Stripe::setApiKey(env('SECRET_STRIPE_KEY'));
-
-        // URL de votre domaine
         $YOUR_DOMAIN = env('APP_URL');
         $token = uniqid();
         // Créer une session de paiement
         $checkout_session = Session::create([
             
-            'line_items' => [[
-                'price' => 'price_1P6TLeHXPy8dk2GGrYPVFjnO',
-                'quantity' => 1,
-            ]],
+            'line_items' => $line_items,
             'customer_email'=>$user->email,
             'mode' => 'payment',
             'success_url' => $YOUR_DOMAIN . '/stripe/success/' . $token,
@@ -88,6 +95,10 @@ class StripeController extends Controller
                         'currency' => 'eur', 
                         'product' => $product->id, 
                     ]);
+                    $stripe->products->update(
+                        $product->id,
+                        ['default_price' => $price->id],
+                      );
 
                     $article->stripe_id=$product->id;
                     
@@ -120,10 +131,18 @@ class StripeController extends Controller
                   else {
                     
                     $user = User::where("id",$commande->user_id)->first();
+                    $paniers = Panier::where("user_id",$user->id)
+                                ->where("standby",0)
+                                ->get();
+                    foreach ($paniers as $panier) {
+                        $panier->delete();
+                    }
                     $commande->status="paid";
                     $commande->save();
                     $result = Mail::to("erwan.soria@gmail.com")->send(new new_order());
                     $result = Mail::to($user->email)->send(new confirm_order($commande->numero_commande));
+                    
+                    
                     return view("success");
                   }
                 

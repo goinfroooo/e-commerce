@@ -118,6 +118,7 @@ class PanierController extends Controller
                     $element["img_path"]=$article->img_path;
                     $element["article_token"]=$article->token;
                     $element["qte"]=$cart->qte;
+                    $element["standby"]=$cart->standby;
                     array_push($content,$element);
                 }
                 return response()->json(['content' => $content], 200);
@@ -278,6 +279,50 @@ class PanierController extends Controller
                     
                 }
             }
+
+        } catch (\Exception $e) {
+            // En cas d'erreur, annuler la transaction
+            return response()->json(['error' => $e->getMessage()], 404);
+            throw $e;
+        }
+    }
+
+    public function update_standby(Request $request)
+    {
+
+        try {
+            $validator = Validator::make($request->all(), [
+                'user_token' => 'required|string|max:255',
+                'article_token' => 'required|string|max:255',
+                'standby'=> 'required|boolean',
+                
+            ]);
+            
+            if ($validator->fails()) {
+                return response()->json(['error' => $validator->errors()->first()], Response::HTTP_BAD_REQUEST);
+            }
+        
+            // Créer un nouvel utilisateur
+            $validatedData=$validator->validated();
+        
+            $user = User::where("user_token",$validatedData['user_token'])->first();
+            $article = Article::where("token",$validatedData['article_token'])->first();
+
+            if (!$user) {
+                return response()->json(['error' => "token utilisateur invalide"], 404);
+            }
+            else if (!$article) {
+                return response()->json(['error' => "article introuvable"], 404);
+            }
+            else {
+                $cart = Panier::where("user_id",$user->id)
+                                ->where("article_id",$article->id)
+                                ->first();
+                
+                $cart->standby = $validatedData["standby"];
+                $cart->save();
+                return response()->json(['message' => "success"], 200);
+                }
 
         } catch (\Exception $e) {
             // En cas d'erreur, annuler la transaction

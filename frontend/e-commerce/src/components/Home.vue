@@ -60,7 +60,7 @@ const get_all_articles = async () => {
                 throw new Error('La requête a échoué.');
             }
             const data = await response.json();
-            console.log(data);
+            //console.log(data);
             return data;
         } catch (error) {
             console.error("Erreur lors de l'envoi du formulaire:", error);
@@ -100,7 +100,7 @@ try {
         
       }),
   }
-  console.log(options);
+  //console.log(options);
 
   
       const response = await fetch(Config.backendConfig.apiUrl + route, options);

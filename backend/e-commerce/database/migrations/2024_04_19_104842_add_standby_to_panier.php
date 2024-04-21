@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('paniers', function (Blueprint $table) {
             // Ajouter la colonne "standby" de type booléen avec une valeur par défaut de false
-            $table->boolean('standby')->default(false);
+            $table->boolean('standby')->default(false)->after("qte");
         });
 
         // Mettre à jour toutes les lignes existantes pour définir la valeur de la colonne "standby" sur false

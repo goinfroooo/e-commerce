@@ -16,7 +16,7 @@
 
                             </div>
                             <div class="border-bottom border-3 border-light border-top-0 border-start-0 border-end-0 my-1 py-1 d-flex row"  v-for="(cart,index) in carts" :key="index">
-                                <div class="me-3 col-1 d-flex align-items-center justify-content-center"><input type="checkbox" :id="'checkbox_'+cart.article_token" class="checkbox_panier" checked="true" @change="put_in_standby(index)"></div>
+                                <div class="me-3 col-1 d-flex align-items-center justify-content-center"><input type="checkbox" :id="'checkbox_'+cart.article_token" class="checkbox_panier" :checked="!cart.standby" @change="put_in_standby(index,cart.article_token)"></div>
                                 <div class="me-3 col-4 d-flex align-items-center justify-content-center"><router-link :to="'/article/' + cart.article_token"><img :src="Config.backendConfig.apiUrl+cart.img_path" class="card-img-top w" :alt="cart.short_desc"></router-link></div>
                                 <div class="me-3 col-2 d-flex align-items-center justify-content-center"><router-link class="nav-link" :to="'/article/' + cart.article_token">{{ cart.nom }}</router-link></div>
                                 <div class="me-3 col-2 d-flex align-items-center justify-content-center">{{ formatPrice(cart.prix) }}</div>
@@ -133,18 +133,53 @@ const remove_article_from_cart = async (article_token) => {
 
 }
 
-const put_in_standby = (index,$event) => {
+const put_in_standby = async (index,article_token,$event) => {
 
     carts.value[index].standby=!event.target.checked;
+    try {
+
+    const user_token = getCookie("USER-TOKEN");
+
+    if (!user_token) {
+    alert ("veuillez vous connectez ou creer un compte");
+    return -1;
+    }
+
+    const route = "/cart/update_standby";
+    let options = {
+        method: 'POST',
+        headers: {
+            "X-CSRF-TOKEN": getCookie("X-CSRF-TOKEN"),
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+        "article_token": article_token,
+        "user_token": user_token,
+        "standby": !event.target.checked,
+        
+        }),
+    }
+    console.log(options);
+
+
+        const response = await fetch(Config.backendConfig.apiUrl + route, options);
+        if (!response.ok) {
+            throw new Error('La requête a échoué.');
+        }
+        const data = await response.json();
+        console.log(data);
+        return data.message==="sucess" ? 0 : -1;
+    } catch (error) {
+        console.error("Erreur lors de l'envoi du formulaire:", error);
+        alert("erreur : veuillez contacter l'administrateur du site")
+    }
 }
 
 
 onMounted( async () => {
     AskCsrfToken();
     carts.value = await get_cart();
-    for (let cart of carts.value) {
-        cart["standby"]=false;
-    }
+    
 
 });
 

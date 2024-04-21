@@ -26,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
             '/cart/get_qte_tot',
             '/cart/remove_article',
             '/cart/update_qte',
+            '/cart/update_standby',
             '/stripe/pay',
             '/commande/get',
             

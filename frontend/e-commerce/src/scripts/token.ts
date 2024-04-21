@@ -8,7 +8,7 @@ export const AskCsrfToken = async () =>  {
     })
     .then(response => response.json()) // Si le script PHP renvoie du JSON
     .then(data => {
-        console.log(data.csrf_token);
+        //console.log(data.csrf_token);
         setCookie("X-CSRF-TOKEN",data.csrf_token,30);
         return 0;
         })

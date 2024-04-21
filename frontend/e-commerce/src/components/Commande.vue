@@ -1,11 +1,9 @@
 <template>
 
     <div class="container">
-        <div v-if="carts=[] || carts===null" class="spinner-border" role="status">
-        <span class="visually-hidden">Loading...</span>
-        </div>
-        <div v-else class="row">
-            <div class="col-md-10"> <!-- Utilisez la colonne Bootstrap pour les éléments du panier -->
+
+        <div  class="row">
+            <div class="col-md-12"> <!-- Utilisez la colonne Bootstrap pour les éléments du panier -->
                 <div class="card m-2 mb-0">
                     <div class="card-body">
                         <section v-if="carts" id="recapitulatif" class=" border-bottom border-3">
@@ -22,16 +20,16 @@
 
                                     </div>
                                     <div class="m-0 p-0 overflow-y-auto" style="max-height: 300px; ">
-                                        <div class="border-bottom border-3 border-light border-top-0 border-start-0 border-end-0 my-1 py-1 d-flex row"  v-for="(cart,index) in carts" :key="index">
-                                        <div class="me-3 col-4 d-flex align-items-center justify-content-center"><img :src="Config.backendConfig.apiUrl+cart.img_path" class="card-img-top w" :alt="cart.short_desc"></div>
-                                        <div class="me-3 col-2 d-flex align-items-center justify-content-center">{{ cart.nom }}</div>
-                                        <div class="me-3 col-2 d-flex align-items-center justify-content-center">{{ formatPrice(cart.prix) }}</div>
-                                        <div class="me-3 col-1 d-flex align-items-center justify-content-center">{{ cart.qte }} </div>
-
+                                        <div class="m-0 p-0"  v-for="(cart,index) in carts" :key="index">
+                                            <div class="border-bottom border-3 border-light border-top-0 border-start-0 border-end-0 my-1 py-1 d-flex row" v-if="cart.standby==0">
+                                                <div class="me-3 col-4 d-flex align-items-center justify-content-center"><img :src="Config.backendConfig.apiUrl+cart.img_path" class="card-img-top w" :alt="cart.short_desc"></div>
+                                                <div class="me-3 col-2 d-flex align-items-center justify-content-center">{{ cart.nom }}</div>
+                                                <div class="me-3 col-2 d-flex align-items-center justify-content-center">{{ formatPrice(cart.prix) }}</div>
+                                                <div class="me-3 col-1 d-flex align-items-center justify-content-center">{{ cart.qte }} </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    </div>
-                                    
-                              </div>
+                                </div>
                         </section>
                         <section class=" border-bottom border-3">
                           <div class="container">
