@@ -12,19 +12,34 @@
 <script setup lang="ts">
 
     import { defineProps,computed } from 'vue';
-    import { getCsrfToken,getUserToken,AskCsrfToken} from "../scripts/token";
-    import Config from "../scripts/config";
     import { useRouter } from 'vue-router';
-    import {formatPrice,get_article_data} from "../scripts/commun";
-    import {Popover} from "bootstrap";
-    import { CommandeStore } from '../../store/commande';
-    
+    //    import { CommandeStore } from '../../store/commande';
+
+    interface CartItem {
+        nom: string;
+        prix: number;
+        short_desc: string;
+        img_path: string;
+        article_token: string;
+        qte: number;
+        standby: boolean;
+    // Autres propriétés nécessaires
+    }   
+
     const router = useRouter();
-    const props = defineProps({carts: Array });
+    const props = defineProps({
+    carts: {
+        type: [Array, null] as unknown as () => (CartItem[] | null),
+        default: null
+    }
+});
+
 
     const prix_total = computed(()=>{
         let prix_tot=0;
-        
+        if (props.carts===null) {
+            return prix_tot;
+        }
         for (let cart of props.carts){
             if (!cart.standby) {
                 prix_tot+=cart.prix*cart.qte;
@@ -34,6 +49,9 @@
     })
     const qte_tot= computed(()=>{
         let qte=0;
+        if (props.carts===null) {
+            return qte;
+        }
         for (let cart of props.carts){
             if (!cart.standby) {
                 qte+=cart.qte;
@@ -43,7 +61,7 @@
     })
     
     const commander = () => {
-        CommandeStore.carts=props.carts;
+        //CommandeStore.carts=props.carts; reliquat
         router.push({ name: 'Commande'});
     }
 </script>

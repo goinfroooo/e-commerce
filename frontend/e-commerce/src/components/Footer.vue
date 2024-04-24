@@ -86,17 +86,7 @@
 </template>
 
 <script setup lang="ts">
-
-
-import { Modal } from 'bootstrap';
-import { onMounted,ref } from "vue";
 import "https://kit.fontawesome.com/14273d579a.js";
-
-onMounted( () => {
-  const modal = new Modal(document.getElementById('modal_mention_legales'),{keyboard: true});
-  const modal2 = new Modal(document.getElementById('modal_conditions_vente'),{keyboard: true});
-
-});
 
 </script>
 

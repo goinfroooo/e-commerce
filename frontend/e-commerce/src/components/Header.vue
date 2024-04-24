@@ -21,7 +21,7 @@
                                 <li><button  class="dropdown-item" @click="deconnect()">Deconnexion</button></li>
                             </ul>
                         </li>
-                        <li class="nav-item d-flex align-items-center">
+                        <li v-if="isConnected" class="nav-item d-flex align-items-center">
                             <router-link to="/panier" class="nav-link">Panier</router-link>
                             <div class="position-relative ml-2" style="top: -20px; right: -20px;">
                                 <span class="position-absolute top-0 end-0 bg-warning text-white px-2 rounded-pill">{{ cart_qte }}</span>
@@ -80,73 +80,105 @@
 
 import { AskCsrfToken,setCookie, deleteCookie,getCookie } from "../scripts/token";
 import Config from "../scripts/config";
-import { Modal } from 'bootstrap';
-import { onMounted,onBeforeUnmount,ref } from "vue";
+
+import { onMounted,onBeforeUnmount,ref,Ref } from "vue";
+
+
+interface profilItem {
+    name: string;
+    birthday: string;
+    email: string;
+    adresse_livraison: string;
+    adresse_facturation: string;
+    phone: string;
+    user_token: string;
+    created_at: string;
+    // Autres propriétés nécessaires
+    }   
+
+    interface ProfilInfo {
+        [key: string]: string | null;
+    }
 
 const isConnected = ref(false);
-const profil = ref(null);
-const cart_qte = ref(null);
-const cart_qte_interval =ref(null);
+const profil: Ref<profilItem | null> = ref<profilItem | null>(null);
+const cart_qte: Ref<number |null> = ref <number |null> (null);
+const cart_qte_interval: Ref<number | null> =ref<number | null>(null);
     
 const submit_connexion_form = async () => {
     // Récupérer les données du formulaire
-    
-    var form = document.getElementById('connexion_form');
-    console.log (form);
-    var formData = new FormData(form);
-    const route = "/user/get_connected";
-    // Envoyer les données via Fetch
-    await AskCsrfToken ();
+    try {
 
-    let options = {
-        method: 'POST',
-        headers: {
-            "X-CSRF-TOKEN":getCookie("X-CSRF-TOKEN"),
-        },
-        body: formData,
-    }
-    console.log (options);
-    fetch(Config.backendConfig.apiUrl+route, options)
-    .then(response => {
-        console.log(response)
-        if (!response.ok) {
-            console.warn(response.message);
-            console.warn(response);
-            if (response.status==401 ){
-                throw new Error(response.message);
+        let form = document.getElementById('connexion_form');
+        if (form instanceof HTMLFormElement) {
+            let  formData = new FormData(form);
+            const route = "/user/get_connected";
+            // Envoyer les données via Fetch
+            await AskCsrfToken ();
+
+            let options = {
+                method: 'POST',
+                headers: {
+                    "X-CSRF-TOKEN":getCookie("X-CSRF-TOKEN"),
+                },
+                body: formData,
             }
-            
-        }
-        return response.json();
-    }) // Si le script PHP renvoie du JSON
-    .then(data => {
-        // Traiter la réponse du serveur (si nécessaire)
-        console.log(data);
-        setCookie("USER-TOKEN",data.user_token,30)
-        const profil_info: {} = data;
-        delete profil_info["user_token"];
-        profil_info["password"]=formData.get("password");
-        console.log(profil_info);
-        setCookie("Profil",JSON.stringify(profil_info),30)
-        alert ("connected");
+            console.log (options);
+            fetch(Config.backendConfig.apiUrl+route, options)
+            .then(response => {
+                console.log(response)
+                if (!response.ok) {
 
-    })
-    .catch(error => {
-        console.log(error);
-        if (error instanceof Error) {
-            // Erreur de réseau ou d'analyse JSON
-            alert("Erreur : " + error.message + ". Veuillez c l'administrateur du site.");
+                    console.warn(response);
+                    if (response.status==401 ){
+                        throw new Error("Unauthorized");
+                    }
+                    
+                }
+                return response.json();
+            }) // Si le script PHP renvoie du JSON
+            .then(data => {
+                // Traiter la réponse du serveur (si nécessaire)
+                //console.log(data);
+                setCookie("USER-TOKEN", data.user_token, 30);
+                const profil_info: ProfilInfo = data;
+                delete profil_info["user_token"];
+
+                const password = formData.get("password");
+                if (password !== null) {
+                    profil_info["password"] = password.toString(); 
+                }
+                setCookie("Profil",JSON.stringify(profil_info),30)
+                alert ("connected");
+
+            })
+            .catch(error => {
+                console.log(error);
+                if (error instanceof Error) {
+                    // Erreur de réseau ou d'analyse JSON
+                    alert("Erreur : " + error.message + ". Veuillez c l'administrateur du site.");
+                } else {
+                    // Erreur de réponse HTTP
+                    alert("Erreur HTTP : " + error + ". Veuillez vérifier votre connexion Internet.");
+                }
+            });
         } else {
-            // Erreur de réponse HTTP
-            alert("Erreur HTTP : " + error + ". Veuillez vérifier votre connexion Internet.");
+            return -1;
         }
-    });
+    }catch (error) {
+        console.error(error);
+    }
+
+    
 };
 
 const get_cart_qte = async () => {
     // Récupérer les données du formulaire
     
     try {
+        if (!isConnected.value) {
+            return 1;
+        }
         const route = "/cart/get_qte_tot";
         // Envoyer les données via Fetch
         await AskCsrfToken ();
@@ -186,19 +218,22 @@ const deconnect = () => {
 
 const closeModal = () => {
     const btn_dismiss = document.getElementById("btn_dismiss_modal_connexion");
-    btn_dismiss.click();
+    if (btn_dismiss) {
+        btn_dismiss.click();
+    }
 }
 
 onMounted( () => {
-  const modal = new Modal(document.getElementById('modal_connexion',{keyboard: true}));
-  cart_qte_interval.value = setInterval(get_cart_qte, 1000);
+  cart_qte_interval.value = setInterval(get_cart_qte, 1000) as unknown as number ;
 });
 
 
 
 onBeforeUnmount( () => {
   
-  clearInterval(cart_qte_interval.value);
+    if (cart_qte_interval.value !== null) {
+        clearInterval(cart_qte_interval.value);
+    }
 });
 
 // Définir l'intervalle de 5 secondes en millisecondes

@@ -15,7 +15,7 @@ const routes = [
   {path: '/profil',name: 'Profil',component: Profil},
   {path: '/panier',name: 'Panier',component: Panier},
   {path: '/historique',name: 'Historique',component: Historique},
-  {path: '/commande',name: 'Commande',component: Commande, props: (route) => ({ numbers: route.params.numbers })},
+  {path: '/commande',name: 'Commande',component: Commande},
 
 ]
 

@@ -32,14 +32,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref,onMounted,onBeforeUnmount } from 'vue';
+import { ref,Ref,onMounted,onBeforeUnmount } from 'vue';
 import { AskCsrfToken,getCookie} from "../scripts/token";
 import Config from "../scripts/config";
 import {formatPrice,showPopover} from "../scripts/commun";
 
+interface allArticleItem {
+        nom: string;
+        prix: number;
+        short_description: string;
+        img_path: string;
+        token: string;
+        options: string;
+    // Autres propriétés nécessaires
+    }   
 
-const intervalId = ref(null);
-const all_article = ref(null);
+const intervalId = ref<number | null>(null);
+const all_article: Ref<allArticleItem[] | null> = ref<allArticleItem[] | null>(null);
+
 
 const get_all_articles = async () => {
 
@@ -75,7 +85,7 @@ const get_data =   async () => {
 
 // Définir l'intervalle de 5 secondes en millisecondes
 
-const add_to_cart = async (article_token,event) => {
+const add_to_cart = async (article_token: string ,event: Event) => {
 
   
 try {
@@ -120,14 +130,16 @@ try {
 
 onMounted(async () => {
   get_data();
-  intervalId.value = setInterval(get_data, 3000);
+  intervalId.value = setInterval(get_data, 3000) as unknown as number;
   
   
 });
 
 onBeforeUnmount( () => {
   
-  clearInterval(intervalId.value);
+  if (intervalId.value !== null) {
+    clearInterval(intervalId.value);
+  }
 });
 </script>
 

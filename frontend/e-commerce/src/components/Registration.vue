@@ -66,81 +66,86 @@
 </template>
 
 <script setup lang="ts">
-    import { ref,onMounted,defineProps } from 'vue';
+    import {onMounted} from 'vue';
     import { getCookie,AskCsrfToken} from "../scripts/token";
     import Config from "../scripts/config";
-    import { useRoute } from 'vue-router';
     import {phone_prefix} from "../scripts/commun";
     import adress_form from "./subcomponents/Adress_form.vue";
 
     
-    const article = ref(null);
 
-    const formatData = (form) => {
+const formatData = (form: HTMLFormElement) => {
+    const formData: FormData = new FormData(form);
+    const name: string = (formData.get("first_name") || "") + " " + (formData.get("last_name") || "");
+    const adress: string = (formData.get("adress_number") || "") + " " + (formData.get("adress") || "") + " " + (formData.get("postal_code") || "") + " " + (formData.get("city") || "") + " " + (formData.get("country") || "");
+    const phone_extension_element = document.getElementById("phone_extension");
+    const phone_extension_value = phone_extension_element instanceof HTMLInputElement ? phone_extension_element.value : ""
+    const phone: string = phone_extension_value + " " + (formData.get("phone") || "");
 
-        const formData: FormData = new FormData(form);
-        const name: string = formData.get("first_name")+" "+formData.get("last_name");
-        const adress: string = formData.get("adress_number")+" "+formData.get("adress")+" "+formData.get("postal_code")+" "+formData.get("city")+" "+formData.get("country");
-        const phone: string = document.getElementById("phone_extension").value+" "+formData.get("phone");
-        
-        const finalFormData: FormData = new FormData();
+    const finalFormData: FormData = new FormData();
 
-        // Ajout d'un champ avec append
-        finalFormData.append('name',name);
-        finalFormData.append('birthday',formData.get("birthday"));
-        finalFormData.append('email',formData.get("email"));
-        finalFormData.append('adress',adress);
-        finalFormData.append('phone',phone);
-        finalFormData.append('password',formData.get("password"));
+    // Ajout d'un champ avec append
+    finalFormData.append('name', name);
+    finalFormData.append('birthday', formData.get("birthday") || "");
+    finalFormData.append('email', formData.get("email") || "");
+    finalFormData.append('adress', adress);
+    finalFormData.append('phone', phone);
+    finalFormData.append('password', formData.get("password") || "");
 
-        return finalFormData;
-        
-    }
+    return finalFormData;
+};
+
     
     const submit_inscription_form = async () => {
         // Récupérer les données du formulaire
 
-        let form = document.getElementById('registration_form');
-        
-        const formData: FormData =  formatData(form);
-        const route = "/user/create_user";
-        console.log (formData);
-        await AskCsrfToken ();
+        const form = document.getElementById('registration_form');
+        if (form instanceof HTMLFormElement) {
+            const formData: FormData =  formatData(form);
+            const route = "/user/create_user";
+            console.log (formData);
+            await AskCsrfToken ();
 
-        let options = {
-            method: 'POST',
-            headers: {
-                "X-CSRF-TOKEN": getCookie("X-CSRF-TOKEN"),
-            },
-            body: formData,
+            let options = {
+                method: 'POST',
+                headers: {
+                    "X-CSRF-TOKEN": getCookie("X-CSRF-TOKEN"),
+                },
+                body: formData,
+            }
+            console.log (options);
+            fetch(Config.backendConfig.apiUrl+route, options)
+            .then(response => {
+                console.log(response)
+                if (!response.ok) {
+                    throw new Error('La requête a échoué.');
+                }
+                return response.json();
+            }) 
+            .then(data => {
+                console.log(data.message);
+                if (data.message =="sucess") {
+                    alert ("inscription effectuée");
+                }
+                else {
+                    alert(data.message || "Une erreur inattendue s'est produite.");
+                }
+            })
+            .catch(error => {
+                if (error instanceof Error) {
+                // Erreur de réseau ou d'analyse JSON
+                alert("Erreur : " + error.message + ". Veuillez c l'administrateur du site.");
+            } else {
+                // Erreur de réponse HTTP
+                alert("Erreur HTTP : " + error + ". Veuillez vérifier votre connexion Internet.");
+            }
+            });
         }
-        console.log (options);
-        fetch(Config.backendConfig.apiUrl+route, options)
-        .then(response => {
-            console.log(response)
-            if (!response.ok) {
-                throw new Error('La requête a échoué.');
-            }
-            return response.json();
-        }) 
-        .then(data => {
-            console.log(data.message);
-            if (data.message =="sucess") {
-                alert ("inscription effectuée");
-            }
-            else {
-                alert(data.message || "Une erreur inattendue s'est produite.");
-            }
-        })
-        .catch(error => {
-            if (error instanceof Error) {
-            // Erreur de réseau ou d'analyse JSON
-            alert("Erreur : " + error.message + ". Veuillez c l'administrateur du site.");
-        } else {
-            // Erreur de réponse HTTP
-            alert("Erreur HTTP : " + error + ". Veuillez vérifier votre connexion Internet.");
-        }
-        });
+        
+     else {
+            console.error("L'élément avec l'ID 'registration_form' n'est pas un formulaire HTML.");
+            // Gérez le cas où l'élément n'est pas un formulaire
+    }
     }
   
   onMounted( async () => {

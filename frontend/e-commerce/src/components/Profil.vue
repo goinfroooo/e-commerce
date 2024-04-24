@@ -72,7 +72,7 @@
             <div class="modal-body">
                 <form id="adresse_mail_form">
                     <input class="me-3" type="text" name="new_mail" placeholder="john.doe@email.com">
-                    <button class="btn btn-primary" @click="change_mail()">Sauvegarder</button>
+                    <button class="btn btn-primary" @click="change_mail($event)">Sauvegarder</button>
                 </form>
                 
     
@@ -93,7 +93,7 @@
             <div class="modal-body">
                 <form id="adresse_livraison_form">
                     <adress_form></adress_form>
-                    <button id="btn_change_adresse_livraison" class="btn btn-primary" @click="change_adress()">Sauvegarder</button>
+                    <button id="btn_change_adresse_livraison" class="btn btn-primary" @click="change_adress($event)">Sauvegarder</button>
                 </form>
                 
     
@@ -114,7 +114,7 @@
             <div class="modal-body">
                 <form id="adresse_facturation_form">
                     <adress_form></adress_form>
-                    <button id="btn_change_adresse_facturation" class="btn btn-primary" @click="change_adress()">Sauvegarder</button>
+                    <button id="btn_change_adresse_facturation" class="btn btn-primary" @click="change_adress($event)">Sauvegarder</button>
                 </form>
                 
     
@@ -131,21 +131,22 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted,ref,computed} from 'vue';
+import { onMounted,ref,Ref,computed} from 'vue';
 import { useRouter } from 'vue-router';
 import Config from "../scripts/config";
+import {profilItem} from '../scripts/interface';
 import { AskCsrfToken,getCookie, setCookie } from "../scripts/token";
-import adress_form from "./subcomponents/Adress_form.vue"
-import { Modal } from 'bootstrap';
-
+import adress_form from "./subcomponents/Adress_form.vue";
 
 const router = useRouter();
-const profil = ref(null) ;
+const profil: Ref<profilItem | null> = ref<profilItem | null>(null);
+
 const date_creation = computed (() =>{
     //let dateString = '2024-03-08T10:02:46.000000Z';
-    let dateString = profil.value.created_at;
-    
-    const months = [
+
+    if (profil.value !== null) {
+        let dateString = profil.value.created_at;
+        const months = [
         "janvier", "février", "mars", "avril", "mai", "juin",
         "juillet", "août", "septembre", "octobre", "novembre", "décembre"
     ];
@@ -157,19 +158,16 @@ const date_creation = computed (() =>{
 
     const formattedDate = day + ' ' + months[monthIndex] + ' ' + year;
     return formattedDate;
-});
+    }
+    else {
+        return "";
+    }
+    
+    // Utilisez dateString comme souhaité
 
-const date_anniversaire = computed (() =>{
-    let dateString = profil.value.birthday;
-    const months = [
-        "janvier", "février", "mars", "avril", "mai", "juin",
-        "juillet", "août", "septembre", "octobre", "novembre", "décembre"
-    ];
 
-    const [year, month, day] = dateString.split('-');
-    const formattedDate = `${day} ${months[parseInt(month) - 1]} ${year}`;
+    
 
-    return formattedDate;
 });
 
 
@@ -177,13 +175,18 @@ const save_change = async () => {
 
     let formData = new FormData();
 
-    // Parcourir les clés de l'objet JSON
-    for (var key in profil.value) {
-        if (profil.value.hasOwnProperty(key)) {
-            // Ajouter chaque paire clé-valeur à l'objet FormData
-            formData.append(key, profil.value[key]);
+    if (profil.value !== null && typeof profil.value === 'object') {
+        const profileData: profilItem = profil.value;
+        for (var key in profileData) {
+            if (Object.prototype.hasOwnProperty.call(profileData, key)) {
+                formData.append(key, profileData[key as keyof profilItem] as string);
+            }
         }
     }
+
+
+
+    
     formData.append("user_token",getCookie("USER-TOKEN"));
     console.log(formData);
 
@@ -222,71 +225,98 @@ const save_change = async () => {
     
 }
 
-const change_adress = ($event) => {
-    event?.preventDefault();
-    const type_adress = (event?.target.id).split("_")[3];
-    console.log(type_adress);
-    const form =document.getElementById ("adresse_"+type_adress+"_form");
-    const formData: FormData = new FormData(form);
-    const adress: string = formData.get("adress_number")+" "+formData.get("adress")+" "+formData.get("postal_code")+" "+formData.get("city")+" "+formData.get("country");
-    profil.value["adresse_"+type_adress]=adress;
-    save_change();
-    document.getElementById("btn_dismiss_modal_livraison").click();
+const change_adress = (event: Event) => {
+    event.preventDefault();
 
-}
+    const targetElement = event.target as HTMLElement;
+    if (targetElement && 'id' in targetElement) {
+        const type_adress = targetElement.id.split("_")[3];
+        const form = document.getElementById("adresse_" + type_adress + "_form");
 
-const change_mail = async ($event) => {
+        if (!(form instanceof HTMLFormElement)) {
+            console.error("L'élément avec l'ID 'adresse_mail_form' n'est pas un formulaire HTML.");
+            return -1;
+        }
+        const formData: FormData = new FormData(form);
+        const adress: string = formData.get("adress_number")+" "+formData.get("adress")+" "+formData.get("postal_code")+" "+formData.get("city")+" "+formData.get("country");
+        
+        if (profil.value !== null && typeof profil.value === 'object') {
+            const profileData: Record<string, string> = profil.value as unknown as Record<string, string>;
+            profileData["adresse_" + type_adress] = adress;
+            save_change();
+            const btn_dismiss = document.getElementById("btn_dismiss_modal_livraison");
+            if (btn_dismiss !== null) {
+                btn_dismiss.click();
+            }
+        }
 
-event?.preventDefault();
-let formData = new FormData(document.getElementById("adresse_mail_form"));
 
-formData.append("user_token",getCookie("USER-TOKEN"));
-console.log(formData);
-
-
-const route = "/user/change_mail";
-await AskCsrfToken ();
-
-let options = {
-    method: 'POST',
-    headers: {
-        "X-CSRF-TOKEN":getCookie("X-CSRF-TOKEN"),
-    },
-    body: formData,
-}
-console.log (options);
-fetch(Config.backendConfig.apiUrl+route, options)
-.then(response => {
-    console.log(response)
-    if (!response.ok) {
-        throw new Error('La requête a échoué.');
+    } else {
+        return -1;
     }
-    return response.json();
-}) // Si le script PHP renvoie du JSON
-.then(data => {
-    // Traiter la réponse du serveur (si nécessaire)
-    console.log(data);
-    if (data.message==="sucess"){
-        alert ("Un e-mail a été envoyé à la nouvelle adresse. Veuillez confirmer le changement en cliquant sur le lien dans le mail");
-    }
-    else {
-        alert ("le message de confirmation n'a pas pu etre envoyé. Veuillez vérifier l'adresse mail avant de réessayer. Si le problème persiste contactez l'administrateur du site.");
-    }
-})
-.catch(error => {
-    // Gérer les erreurs de la requête
-    console.error(error);
     
-});
+    
+
+}
+
+const change_mail = async (event: Event) => {
+
+event.preventDefault();
+
+    let formElement = document.getElementById("adresse_mail_form");
+    if (!(formElement instanceof HTMLFormElement)) {
+        console.error("L'élément avec l'ID 'adresse_mail_form' n'est pas un formulaire HTML.");
+        return -1;
+    }
+
+    let formData = new FormData(formElement);
+    // Utilisez formData comme souhaité
+
+    formData.append("user_token",getCookie("USER-TOKEN"));
+    console.log(formData);
+
+
+    const route = "/user/change_mail";
+    await AskCsrfToken ();
+
+    let options = {
+        method: 'POST',
+        headers: {
+            "X-CSRF-TOKEN":getCookie("X-CSRF-TOKEN"),
+        },
+        body: formData,
+    }
+    console.log (options);
+    fetch(Config.backendConfig.apiUrl+route, options)
+    .then(response => {
+        console.log(response)
+        if (!response.ok) {
+            throw new Error('La requête a échoué.');
+        }
+        return response.json();
+    }) // Si le script PHP renvoie du JSON
+    .then(data => {
+        // Traiter la réponse du serveur (si nécessaire)
+        console.log(data);
+        if (data.message==="sucess"){
+            alert ("Un e-mail a été envoyé à la nouvelle adresse. Veuillez confirmer le changement en cliquant sur le lien dans le mail");
+        }
+        else {
+            alert ("le message de confirmation n'a pas pu etre envoyé. Veuillez vérifier l'adresse mail avant de réessayer. Si le problème persiste contactez l'administrateur du site.");
+        }
+    })
+    .catch(error => {
+        // Gérer les erreurs de la requête
+        console.error(error);
+        
+    });
 
 }
 
 
 onMounted (()=>{
 
-    const modal_mail = new Modal(document.getElementById('modal_mail',{keyboard: true}));
-    const modal_livraison = new Modal(document.getElementById('modal_adress_livraison',{keyboard: true}));
-    const modal_modal_facturation = new Modal(document.getElementById('modal_adress_facturation',{keyboard: true}));
+
     profil.value = JSON.parse(getCookie("Profil"));
     //const modal_livraison = new Modal(document.getElementById('modal_adresse_livraison'),{keyboard: true});
     //const modal_facturation = new Modal(document.getElementById('modal_adresse_facturation'),{keyboard: true});

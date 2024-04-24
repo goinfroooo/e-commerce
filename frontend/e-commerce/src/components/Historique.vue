@@ -27,7 +27,7 @@
 
                                                 </div>
                                                 <div class="m-0 p-0 overflow-y-auto" style="max-height: 300px; ">
-                                                    <div class="my-1 py-1 d-flex row"  v-for="article in commande.articles" :key="index">
+                                                    <div class="my-1 py-1 d-flex row"  v-for="article in commande.articles">
                                                         <div class="me-3 col-4 d-flex align-items-center justify-content-center"><img :src="Config.backendConfig.apiUrl+article.img_path" class="card-img-top w" :alt="article.short_desc"></div>
                                                         <div class="me-3 col-2 d-flex align-items-center justify-content-center">{{ article.nom }}</div>
                                                         <div class="me-3 col-2 d-flex align-items-center justify-content-center">{{ formatPrice(article.prix) }}</div>
@@ -50,19 +50,48 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted,ref,computed} from 'vue';
+import { onMounted,ref,Ref} from 'vue';
 import {formatPrice} from '../scripts/commun';
 import { useRouter } from 'vue-router';
 import Config from "../scripts/config";
 import { getCookie} from "../scripts/token";
-import moment from 'moment';
 
+
+
+interface profilItem {
+    name: string;
+    birthday: string;
+    email: string;
+    adresse_livraison: string;
+    adresse_facturation: string;
+    phone: string;
+    user_token: string;
+    created_at: string;
+    // Autres propriétés nécessaires
+    } 
+
+interface Article {
+    nom: string;
+    prix: number;
+    short_desc: string;
+    img_path: string;
+    article_token: string;
+    qte: number;
+}
+
+interface Commande {
+    numero: string;
+    livraison_estimee: string;
+    status: string;
+    date_commande: string;
+    articles: Article[];
+}
 
 const router = useRouter();
-const profil = ref(null) ;
-const commandes = ref([])
+const profil: Ref<profilItem | null> = ref<profilItem | null>(null);
+const commandes: Ref<Commande[] | null> = ref <Commande[] | null>(null);
 
-const formatDate = (date) => {
+const formatDate = (date: string) => {
 
     let originalDate = new Date(date);
 
@@ -101,7 +130,7 @@ let options = {
         "user_token": user_token,
     }),
 }
-console.log(options);
+//console.log(options);
 
 
     const response = await fetch(Config.backendConfig.apiUrl + route, options);

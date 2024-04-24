@@ -2,7 +2,7 @@ import { getCookie} from "./token";
 import Config from "./config";
 import {Popover} from "bootstrap";
 
-export const formatPrice = (priceInCentimes) => {
+export const formatPrice = (priceInCentimes: number) => {
     // Convertir le prix en euros
     const priceInEuros = priceInCentimes / 100;
     // Formater le prix en xxx.xx €
@@ -10,12 +10,12 @@ export const formatPrice = (priceInCentimes) => {
   }
   
 
-export const get_article_data = async (token) => {
+export const get_article_data = async (token: string) => {
   try {
     //const articleId = this.$route.params.id;
     
     const route = "/article";
-    let options = {
+    let options: RequestInit = {
         method: 'POST',
         headers: {
             "X-CSRF-TOKEN": getCookie("X-CSRF-TOKEN"),
@@ -52,7 +52,7 @@ export const get_cart = async () => {
   }
   
   const route = "/cart/get";
-  let options = {
+  let options: RequestInit = {
       method: 'POST',
       headers: {
           "X-CSRF-TOKEN": getCookie("X-CSRF-TOKEN"),
@@ -62,7 +62,7 @@ export const get_cart = async () => {
           "user_token": user_token,
       }),
   }
-  console.log(options);
+  //console.log(options);
 
   
       const response = await fetch(Config.backendConfig.apiUrl + route, options);
@@ -70,7 +70,7 @@ export const get_cart = async () => {
           throw new Error('La requête a échoué.');
       }
       const data = await response.json();
-      console.log(data);
+      //console.log(data);
       return data.content;
   } catch (error) {
       console.error("Erreur lors de l'envoi du formulaire:", error);
@@ -79,12 +79,14 @@ export const get_cart = async () => {
 
 }
 
-export const showPopover = (event) => {
-  const pop = new Popover(event.target, { placement: 'right', trigger: 'manual', content: "L'article a bien été ajouté au panier"});
-  pop.show();
-  setTimeout(() => {
-      pop.hide();
-  }, 2000);
+export const showPopover = (event :Event) => {
+    if (event.target instanceof Element) {
+        const pop = new Popover(event.target, { placement: 'right', trigger: 'manual', content: "L'article a bien été ajouté au panier"});
+        pop.show();
+        setTimeout(() => {
+            pop.hide();
+        }, 2000);
+    }
 };
 
 export const phone_prefix = {
