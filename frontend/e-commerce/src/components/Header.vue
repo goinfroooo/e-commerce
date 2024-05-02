@@ -238,8 +238,8 @@ onBeforeUnmount( () => {
 
 // Définir l'intervalle de 5 secondes en millisecondes
 setInterval(() => {
-    isConnected.value = getCookie("USER-TOKEN") === null ? false : true;
-    profil.value = getCookie("Profil")===null ? null : JSON.parse(getCookie("Profil"));
+    isConnected.value = getCookie("USER-TOKEN") === "" ? false : true;
+    profil.value = getCookie("Profil")==="" ? null : JSON.parse(getCookie("Profil"));
 }, 1000);
 
 
