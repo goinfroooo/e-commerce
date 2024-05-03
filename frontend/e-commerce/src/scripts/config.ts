@@ -1,7 +1,7 @@
 const Config = {
     
     backendConfig : {
-    apiUrl: 'http://localhost:80',
+    apiUrl: 'https://ecommercebackend.xoop.website/public',
 },
 
     frontendConfig : {
