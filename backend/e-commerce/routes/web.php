@@ -1,12 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\http\Controllers\ArticleController;
-use App\http\Controllers\IndexController;
-use App\http\Controllers\UserController;
-use App\http\Controllers\PanierController;
-use App\http\Controllers\StripeController;
-use App\http\Controllers\CommandeController;
+use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\IndexController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\PanierController;
+use App\Http\Controllers\StripeController;
+use App\Http\Controllers\CommandeController;
 use Illuminate\Http\Request;
 
 Route::get('/csrf-token', function (Request $request) {
@@ -14,7 +14,6 @@ Route::get('/csrf-token', function (Request $request) {
 });
 
 Route::get('/', [IndexController::class, 'index']);
-
 
 //Article routes
 Route::post('/all_articles', [ArticleController::class, 'get_all']);

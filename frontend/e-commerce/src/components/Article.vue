@@ -5,8 +5,8 @@
     <div v-if="!article" class="spinner-border" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
-    <div v-else class="card">
-        <img :src="Config.backendConfig.apiUrl+article.img_path" class="card-img-top" :alt="article.short_desc">
+    <div v-else class="card d-flex align-items-center">
+        <img :src="Config.backendConfig.apiUrl+article.img_path" class="card-img-top w-50 h-50" :alt="article.short_desc" >
         <div class="card-body">
             <h5 class="card-title">{{article.nom}}</h5>
             <p class="card-text">{{ article.description }}</p>

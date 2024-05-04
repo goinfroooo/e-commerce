@@ -28,6 +28,7 @@ class CommandeController extends Controller
             $commandes = Commande::select("numero_commande","articles","livraison_estimee","status","updated_at")
             ->where("user_id",$user->id)
             ->whereDate("created_at", ">", Carbon::now()->subMonths(3))
+            ->orderBy("created_at","DESC")
             ->get();
             $body = [];
             foreach ($commandes as $commande) {

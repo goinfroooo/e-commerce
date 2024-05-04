@@ -21,12 +21,16 @@
                                 <li><button  class="dropdown-item" @click="deconnect()">Deconnexion</button></li>
                             </ul>
                         </li>
-                        <li v-if="isConnected" class="nav-item d-flex align-items-center">
-                            <router-link to="/panier" class="nav-link">Panier</router-link>
-                            <div class="position-relative ml-2" style="top: -20px; right: -20px;">
-                                <span class="position-absolute top-0 end-0 bg-warning text-white px-2 rounded-pill">{{ cart_qte }}</span>
+                        <li class="nav-item flex-grow-1 text-center">
+                            <div class="d-inline-block position-relative">
+                                <router-link to="/panier" class="nav-link">Panier</router-link>
+                                <div class="position-absolute top-0 start-100 bg-warning text-white px-2 rounded-pill">
+                                    {{ cart_qte }}
+                                </div>
                             </div>
                         </li>
+
+
 
 
 

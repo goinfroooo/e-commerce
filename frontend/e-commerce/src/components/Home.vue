@@ -6,9 +6,9 @@
       <div v-if="!all_article" class="spinner-border " role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
-      <div class="col-4 my-3" v-for="article in all_article">
-        <div class="card p-3">
-          <img :src="Config.backendConfig.apiUrl+article.img_path" class="card-img-top" :alt="article.short_description">
+      <div class="col-12 col-md-4 my-3" v-for="article in all_article">
+        <div class="card p-3 d-flex align-items-center">
+          <img :src="Config.backendConfig.apiUrl+article.img_path" class="card-img-top" :alt="article.short_description" style="max-width: 300px; max-height: 150px; min-height: 150px;">
           <div class="card-body p-1 mb-3">
               <h5 class="card-title">{{article.nom}}</h5>
               <p class="card-text fs-6 overflow-hidden">{{ article.short_description }}</p>

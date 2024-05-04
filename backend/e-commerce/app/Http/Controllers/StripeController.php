@@ -181,11 +181,11 @@ class StripeController extends Controller
             $commande->articles=json_encode($articles);
             $commande->livraison_estimee = Carbon::now()->addDays(7);
 
-            $numeroCommande = Str::random(10, '1234567890');
+            $numeroCommande = strval(random_int(100000000, 999999999));
 
             // Assurez-vous que le numéro de commande est unique
             while (Commande::where('numero_commande', $numeroCommande)->exists()) {
-                $numeroCommande = Str::random(10, '1234567890');
+                $numeroCommande = strval(random_int(100000000, 999999999));
             }
             $commande->numero_commande=$numeroCommande;
             $commande->save();

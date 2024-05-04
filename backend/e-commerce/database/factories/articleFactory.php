@@ -24,7 +24,7 @@ class articleFactory extends Factory
 
         return [
             "nom" =>$faker->word(),
-            "prix" =>$faker->numberBetween(1, 1000000),
+            "prix" =>$faker->numberBetween(1, 50000),
             "short_description" =>$faker->sentence(30),
             "description" =>$faker->sentence(100),
             "token" => Str::random(10),
