@@ -1,8 +1,8 @@
 <template>
 
     <section id="historique">
-        <div class="container-fluid ps-2 m-3 bg-light">
-            <div v-if="!commandes" class="spinner-border " role="status">
+        <div class="container-fluid ps-2 m-3 bg-secondary">
+            <div v-if="!commandes" class="spinner-border bg-secondary" role="status">
                 <span class="visually-hidden ">Loading...</span>
             </div>
             <div v-else>

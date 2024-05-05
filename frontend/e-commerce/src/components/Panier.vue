@@ -1,7 +1,8 @@
 <template>
+
     <div class="container">
         <div class="row">
-            <div class="col-md-10"> <!-- Utilisez la colonne Bootstrap pour les éléments du panier -->
+            <div class="col-12 col-md-10 order-2 order-md-1"> <!-- Utilisez la colonne Bootstrap pour les éléments du panier -->
                 <div class="card m-2 mb-0">
                     <div class="card-body m-0">
                         <h5 class="card-title">Panier</h5>
@@ -27,10 +28,10 @@
                     </div>
                 </div>
             </div>
-            <div class="col-2 col-lg-2"> <!-- Utilisez la colonne Bootstrap pour le menu -->
+            <div class="col-12 col-md-2 order-1 order-md-2"> <!-- Utilisez la colonne Bootstrap pour le menu -->
                 <!-- Composant de paiement -->
-                <div class="position-fixed mt-2" style="width: 20%;">
-                    <Paiement :carts="carts" ></Paiement>
+                <div class="paiement w-100 mt-2 p-2" style="width: 20%;">
+                    <Paiement :carts="carts"></Paiement>
                 </div>
             </div>
         </div>
@@ -207,4 +208,11 @@ onMounted( async () => {
     .test {
         min-width: 70px;
     }
+
+    @media (min-width: 768px) {
+  .paiement {
+    position: fixed;
+    
+  }
+}
 </style>

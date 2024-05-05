@@ -1,5 +1,3 @@
-const isProd = false;
-
 const Config = {
         
     backendConfig : {
@@ -10,21 +8,19 @@ const Config = {
     indexUrl : "http://localhost:5173/"
 },
 
+};/*
+
+const Config = {
+    
+    backendConfig : {
+    apiUrl: 'https://ecommercebackend.xoop.website/public',
+},
+
+    frontendConfig : {
+    indexUrl : "https://ecommerce.xoop.website/"
+},
+
 };
-
-if (isProd) {
-    const Config = {
-        
-        backendConfig : {
-        apiUrl: 'https://ecommercebackend.xoop.website/public',
-    },
-
-        frontendConfig : {
-        indexUrl : "https://ecommerce.xoop.website/"
-    },
-
-    };
-}
-
+*/
 
 export default Config;

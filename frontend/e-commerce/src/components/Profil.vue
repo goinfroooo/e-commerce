@@ -14,29 +14,24 @@
                     </div>
                     
                     <div class="card-body rounded-3 border border-2 border-black my-2">
-                        <table class=" w-100 " >
-                            <tr>
-                                <td class="p-3 rounded-3 bg-light w-25">nom</td>
-                                <td class="p-3  w-25"><input type="text" v-model="profil.name" class="form-control"></td>
-                                <td class="p-3  bg-light w-25">Date de naissance</td>
-                                <td class="p-3  w-25"><input type="date" v-model="profil.birthday" class="form-control"></td>
+                        <div class=" container" >
+                            <div class="row">
+                                <div class="col-6 col-md-3 p-3 rounded-3 bg-light ">nom</div>
+                                <div class="col-6 col-md-3 p-3  "><input type="text" v-model="profil.name" class="form-control"></div>
+                                <div class="col-6 col-md-3 p-3  bg-light ">Date de naissance</div>
+                                <div class="col-6 col-md-3 p-3  "><input type="date" v-model="profil.birthday" class="form-control"></div>
 
-                            </tr>
-                            <tr>
-
-                                <td class="p-3  bg-light w-25" style="--bs-bg-opacity: .8;">Adresse mail</td>
-                                <td class="p-3 w-25">{{ profil.email}} <br><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal_mail">modifier l'email</button></td>
-                                <td class="p-3  bg-light w-25" style="--bs-bg-opacity: .8;">Téléphone</td>
-                                <td class="p-3 w-25"><input v-model="profil.phone" class="form-control"></td>
-                            </tr>
-                            <tr>
+                                <div class="col-6 col-md-3 p-3  bg-light " style="--bs-bg-opacity: .8;">Adresse mail</div>
+                                <div class="col-6 col-md-3 p-3 " style="max-width: 25%; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">{{ profil.email}} <br><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal_mail">modifier l'email</button></div>
+                                <div class="col-6 col-md-3 p-3  bg-light " style="--bs-bg-opacity: .8;">Téléphone</div>
+                                <div class="col-6 col-md-3 p-3 "><input v-model="profil.phone" class="form-control"></div>
                                 
-                                <td class="p-3  bg-light w-25">Profil crée le</td>
-                                <td class="p-3 w-25">{{ date_creation}}</td>
-                            </tr>
+                                <div class="col-6 col-md-3 p-3  bg-light ">Profil crée le</div>
+                                <div class="col-6 col-md-3 p-3 ">{{ date_creation}}</div>
+                            </div>
 
                             
-                        </table>
+                        </div>
                     </div>
                     <button class="bg-light border-3" @click="save_change()">Sauvegarder</button>
                 </div>
