@@ -86,7 +86,6 @@
 </template>
 
 <script setup lang="ts">
-import "https://kit.fontawesome.com/14273d579a.js";
 
 </script>
 

@@ -1,4 +1,4 @@
-const Config = {
+/*const Config = {
         
     backendConfig : {
     apiUrl: 'http://localhost:8000',
@@ -8,12 +8,12 @@ const Config = {
     indexUrl : "http://localhost:5173/"
 },
 
-};/*
+};*/
 
 const Config = {
     
     backendConfig : {
-    apiUrl: 'https://ecommercebackend.xoop.website/public',
+    apiUrl: 'https://ecommercebackend.xoop.website',
 },
 
     frontendConfig : {
@@ -21,6 +21,6 @@ const Config = {
 },
 
 };
-*/
+
 
 export default Config;

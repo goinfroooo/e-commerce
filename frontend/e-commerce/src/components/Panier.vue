@@ -1,40 +1,39 @@
 <template>
 
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-12 col-md-10 order-2 order-md-1"> <!-- Utilisez la colonne Bootstrap pour les éléments du panier -->
-                <div class="card m-2 mb-0">
-                    <div class="card-body m-0">
+            <div class="col-md-9 col-lg-10 order-2 order-md-1"> <!-- Utilisez la colonne Bootstrap pour les éléments du panier -->
+                <div class="card p-1 p-md-2 m-2 mb-0">
+                    <div class="card-body m-0 p-0 p-md-2">
                         <h5 class="card-title">Panier</h5>
                         <div class="container">
                             <div class="border-bottom border-3 border-light border-top-0 border-start-0 border-end-0 my-1 py-1 d-flex row">
-                                <div class="me-3 col-1 col-lg-1 d-flex align-items-center justify-content-center"></div>
-                                <div class="me-3 col-2 col-lg-3 d-flex align-items-center justify-content-center"></div>
-                                <div class="me-3 col-1 col-lg-2 d-flex align-items-center justify-content-center"></div>
-                                <div class="me-3 col-2 col-lg-2 d-flex align-items-center justify-content-center">Prix</div>
-                                <div class="me-3 col-2 col-lg-1 d-flex align-items-center justify-content-center">Quantité </div>
-                                <div class="me-3 col-1 col-lg-1 d-none d-lg-flex align-items-center justify-content-center">Supprimer </div>
+                                <div class="me-1 me-md-3 col-1 col-md-1 d-flex align-items-center justify-content-center"></div>
+                                <div class="me-1 me-md-3 col-2 col-md-2 d-flex align-items-center justify-content-center"></div>
+                                <div class="me-1 me-md-3 col-1 col-md-2 d-flex align-items-center justify-content-center"></div>
+                                <div class="me-1 me-md-3 col-3 col-md-2 d-flex align-items-center justify-content-center">Prix</div>
+                                <div class="me-1 me-md-3 col-3 col-md-1 d-flex align-items-center justify-content-center">Quantité </div>
+                                <div class="me-1 me-md-3 col-1 col-md-1 d-none d-lg-flex align-items-center justify-content-center">Supprimer </div>
 
                             </div>
                             <div class="border-bottom border-3 border-light border-top-0 border-start-0 border-end-0 my-1 py-1 d-flex row"  v-for="(cart,index) in carts" :key="index">
-                                <div class="me-3 col-1 col-lg-1 d-flex align-items-center justify-content-center"><input type="checkbox" :id="'checkbox_'+cart.article_token" class="checkbox_panier" :checked="!cart.standby" @change="put_in_standby(index,cart.article_token,$event)"></div>
-                                <div class="me-3 col-2 col-lg-3 d-flex align-items-center justify-content-center"><router-link :to="'/article/' + cart.article_token"><img :src="Config.backendConfig.apiUrl+cart.img_path" class="card-img-top w" :alt="cart.short_desc"></router-link></div>
-                                <div class="me-3 col-1 col-lg-2 d-flex align-items-center justify-content-center"><router-link class="nav-link" :to="'/article/' + cart.article_token">{{ cart.nom }}</router-link></div>
-                                <div class="me-3 col-2 col-lg-2 d-flex align-items-center justify-content-center">{{ formatPrice(cart.prix) }}</div>
-                                <div class="me-3 col-2 col-lg-1 d-flex align-items-center justify-content-center"><input type="number" v-model=" cart.qte" class="form-control w-100 test" min="1" step="1"  @change="update_qte(cart.article_token,$event)"> </div>
-                                <div class="me-3 col-1 col-lg-1 d-flex align-items-center justify-content-center"><button class="btn" @click="remove_article_from_cart(cart.article_token)"><i class="fa-solid fa-trash"></i></button></div>
+                                <div class="me-1 me-md-3 col-1 col-md-1 d-flex align-items-center justify-content-center"><input type="checkbox" :id="'checkbox_'+cart.article_token" class="checkbox_panier" :checked="!cart.standby" @change="put_in_standby(index,cart.article_token,$event)"></div>
+                                <div class="me-1 me-md-3 col-2 col-md-2 d-flex align-items-center justify-content-center"><router-link :to="'/article/' + cart.article_token"><img :src="Config.backendConfig.apiUrl+cart.img_path" class="card-img-top w" :alt="cart.short_desc"></router-link></div>
+                                <div class="me-1 me-md-3 col-1 col-md-2 d-flex align-items-center justify-content-center"><router-link class="nav-link" :to="'/article/' + cart.article_token">{{ cart.nom }}</router-link></div>
+                                <div class="me-1 me-md-3 col-3 col-md-2 d-flex align-items-center justify-content-center">{{ formatPrice(cart.prix) }}</div>
+                                <div class="me-1 me-md-3 col-3 col-md-1 d-flex align-items-center justify-content-center"><input type="number" v-model=" cart.qte" class="form-control w-100 test" min="1" step="1"  @change="update_qte(cart.article_token,$event)"> </div>
+                                <div class="me-1 me-md-3 col-1 col-md-1 d-flex align-items-center justify-content-center"><button class="btn" @click="remove_article_from_cart(cart.article_token)"><i class="fa-solid fa-trash"></i></button></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-md-2 order-1 order-md-2"> <!-- Utilisez la colonne Bootstrap pour le menu -->
-                <!-- Composant de paiement -->
-                <div class="paiement w-100 mt-2 p-2" style="width: 20%;">
+            <div class=" col-md-3 col-lg-2 order-1 order-md-2 "> 
+                    <div class="paiement w-100 mt-2 mt-md-0 p-2" style="width: 20%;">
                     <Paiement :carts="carts"></Paiement>
-                </div>
+                </div>                
             </div>
-        </div>
+        </div>  
     </div>
 </template>
 
@@ -210,9 +209,15 @@ onMounted( async () => {
     }
 
     @media (min-width: 768px) {
-  .paiement {
-    position: fixed;
-    
-  }
-}
+        .paiefment {
+            position: fixed;
+            top: 2em;
+            right: 1em;
+            width: 20%;
+            
+            
+        }
+    }
+
+
 </style>

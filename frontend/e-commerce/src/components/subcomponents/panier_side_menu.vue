@@ -1,12 +1,15 @@
 <template>
 
-    <div class="card payment_card p-2 w-100 h-100">
-        <div class="card-body">
+<div class="card payment_card p-2 w-100 h-100">
+    <div class="card-body d-flex flex-column justify-content-between">
+        <div>
             <h4 class="card-title">Total</h4>
             <div class="my-2 rounded-3">({{ qte_tot }} articles) : <span class="fw-bold">{{ prix_total }} €</span></div>
-            <button class="btn btn-warning my-2" @click="commander">Passer la commande</button>
         </div>
+        <button class="btn btn-warning my-2 align-self-center" @click="commander">Passer la commande</button>
     </div>
+</div>
+
 </template>
 
 <script setup lang="ts">
